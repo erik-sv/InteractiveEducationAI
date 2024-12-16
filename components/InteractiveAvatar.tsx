@@ -322,7 +322,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                     value: "text-white",
                     trigger: "bg-gray-800 data-[hover=true]:bg-gray-700",
                     listbox: "bg-gray-800",
-                    popover: "bg-gray-800",
+                    popoverContent: "bg-gray-800"
                   }}
                 >
                   {STT_LANGUAGE_LIST.map((lang) => (
