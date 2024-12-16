@@ -5,20 +5,20 @@ import { AVATARS } from "@/app/lib/constants";
 import { useEffect, useState } from 'react';
 import { Button, Select, SelectItem } from "@nextui-org/react";
 
-export default function App() {
+export default function Photography1() {
   const [knowledgeBase, setKnowledgeBase] = useState<string>('');
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
 
   useEffect(() => {
     const loadKnowledgeBase = async () => {
       try {
-        const response = await fetch('/api/get-knowledge-base');
+        const response = await fetch('/api/get-photography1-knowledge-base');
         const data = await response.json();
         if (data.knowledgeBase) {
           setKnowledgeBase(data.knowledgeBase);
         }
       } catch (error) {
-        console.error('Error loading knowledge base:', error);
+        console.error('Error loading photography knowledge base:', error);
       }
     };
 
@@ -26,7 +26,6 @@ export default function App() {
   }, []);
 
   const handleDonate = () => {
-    // Add donation link or modal here
     window.open('https://example.com/donate', '_blank');
   };
 
@@ -36,10 +35,10 @@ export default function App() {
         <div className="max-w-[900px] w-full mx-auto py-8 space-y-8">
           <div className="text-center space-y-4">
             <h1 className="text-4xl sm:text-5xl font-bold gradient-text">
-              AI Education Platform
+              Photography Fundamentals
             </h1>
             <p className="text-xl text-gray-300">
-              Empowering Teachers & Students with Personalized Tutoring
+              Master Camera Settings with Interactive Learning
             </p>
             <div className="w-full max-w-xs mx-auto">
               <Select

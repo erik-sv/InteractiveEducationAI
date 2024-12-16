@@ -34,6 +34,13 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase }: In
   const [stream, setStream] = useState<MediaStream>();
   const [debug, setDebug] = useState<string>();
   const [avatarId, setAvatarId] = useState<string>(defaultAvatarId || "");
+
+  useEffect(() => {
+    if (defaultAvatarId) {
+      setAvatarId(defaultAvatarId);
+    }
+  }, [defaultAvatarId]);
+
   const [knowledgeId, setKnowledgeId] = useState<string>(knowledgeBase || "");
   const [language, setLanguage] = useState<string>('en');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -113,7 +120,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase }: In
       });
     } catch (error) {
       console.error("Error starting avatar session:", error);
-      setDebug(error.message);
+      setDebug(error instanceof Error ? error.message : 'An unknown error occurred');
     } finally {
       setIsLoadingSession(false);
     }
@@ -216,107 +223,115 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase }: In
           {stream ? (
             <div 
               ref={containerRef}
-              className="h-[500px] max-w-full w-full justify-center items-center flex rounded-lg overflow-hidden relative"
+              className={`relative w-full ${isFullscreen ? 'fixed inset-0 z-50 bg-black' : ''}`}
               onMouseMove={handleMouseMove}
-              onMouseLeave={() => setShowControls(false)}
             >
-              <video
-                ref={mediaStream}
-                autoPlay
-                playsInline
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              >
-                <track kind="captions" />
-              </video>
-              <div 
-                className={`absolute transition-opacity duration-300 ${
-                  showControls ? 'opacity-100' : 'opacity-0'
-                }`}
-                style={{
-                  bottom: '20px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  zIndex: 10,
-                }}
-              >
-                <div className="flex gap-3 p-4 bg-black/50 rounded-lg backdrop-blur-sm">
-                  <Button
-                    className="btn-solid rounded-lg"
-                    size="lg"
-                    variant="shadow"
-                    onClick={handleToggleMic}
-                  >
-                    {isMicMuted ? "Unmute Mic" : "Mute Mic"}
-                  </Button>
-                  <Button
-                    className="btn-solid rounded-lg"
-                    size="lg"
-                    variant="shadow"
-                    onClick={handleInterrupt}
-                  >
-                    Interrupt
-                  </Button>
-                  <Button
-                    className="btn-danger rounded-lg"
-                    size="lg"
-                    variant="shadow"
-                    onClick={endSession}
-                  >
-                    End Session
-                  </Button>
-                  <Button
-                    className="btn-solid rounded-lg"
-                    size="lg"
-                    variant="shadow"
-                    onClick={handleToggleFullscreen}
-                    isIconOnly
-                  >
-                    <BsArrowsFullscreen className="text-xl" />
-                  </Button>
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                <video
+                  ref={mediaStream}
+                  autoPlay
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-contain bg-gray-900"
+                >
+                  <track kind="captions" />
+                </video>
+                <div 
+                  className={`absolute transition-opacity duration-300 ${
+                    showControls ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  style={{
+                    bottom: '10px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 10,
+                    width: '95%',
+                    maxWidth: '600px'
+                  }}
+                >
+                  <div className="flex justify-center gap-2 p-2 sm:p-3 bg-black/50 rounded-lg backdrop-blur-sm">
+                    <Button
+                      className="btn-solid rounded-lg min-w-0 px-2 sm:px-4"
+                      size="sm"
+                      variant="shadow"
+                      onClick={handleToggleMic}
+                    >
+                      {isMicMuted ? "Unmute" : "Mute"}
+                    </Button>
+                    <Button
+                      className="btn-solid rounded-lg min-w-0 px-2 sm:px-4"
+                      size="sm"
+                      variant="shadow"
+                      onClick={handleInterrupt}
+                    >
+                      Stop
+                    </Button>
+                    <Button
+                      className="btn-danger rounded-lg min-w-0 px-2 sm:px-4"
+                      size="sm"
+                      variant="shadow"
+                      onClick={endSession}
+                    >
+                      End
+                    </Button>
+                    <Button
+                      className="btn-solid rounded-lg min-w-0 w-8 sm:w-10"
+                      size="sm"
+                      variant="shadow"
+                      onClick={handleToggleFullscreen}
+                      isIconOnly
+                    >
+                      <BsArrowsFullscreen className="text-base sm:text-lg" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
           ) : !isLoadingSession ? (
-            <div className="h-full justify-center items-center flex flex-col gap-8 w-[500px] self-center">
+            <div className="flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 gap-8">
               <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg">
-                <Image
-                  src="/avatar_preview.png"
-                  alt="AI Tutor Preview"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+                <div className="absolute inset-0 bg-gray-900">
+                  <Image
+                    src={`/${AVATARS.find(a => a.avatar_id === avatarId)?.name}_avatar_preview.webp`}
+                    alt={`${AVATARS.find(a => a.avatar_id === avatarId)?.name} avatar preview`}
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-4 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Select
-                  label="Select language"
-                  placeholder="Select language"
-                  className="max-w-xs"
+                  label="Select Language"
                   selectedKeys={[language]}
-                  onChange={(e) => {
-                    setLanguage(e.target.value);
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="w-full text-white"
+                  classNames={{
+                    label: "text-white",
+                    value: "text-white",
+                    trigger: "bg-gray-800 data-[hover=true]:bg-gray-700",
+                    listbox: "bg-gray-800",
+                    popover: "bg-gray-800",
                   }}
-                  defaultSelectedKeys={["en"]}
                 >
                   {STT_LANGUAGE_LIST.map((lang) => (
-                    <SelectItem key={lang.key} value={lang.key}>
+                    <SelectItem 
+                      key={lang.key}
+                      value={lang.value}
+                      className="text-white data-[hover=true]:bg-gray-700"
+                      textValue={lang.label}
+                    >
                       {lang.label}
                     </SelectItem>
                   ))}
                 </Select>
-                <div className="flex flex-col gap-4">
-                  <Button
-                    className="btn-solid w-full rounded-lg"
-                    size="lg"
-                    onClick={startSession}
-                  >
-                    Start Session
-                  </Button>
-                </div>
+                <Button
+                  className="btn-primary w-full h-14 text-lg"
+                  size="lg"
+                  onClick={startSession}
+                  isLoading={isLoadingSession}
+                >
+                  Start Session
+                </Button>
               </div>
             </div>
           ) : (

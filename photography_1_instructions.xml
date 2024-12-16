@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<photography_course>
+    <system_instructions>
+        Be CONCISE and CONVERSATIONAL. DO NOT answer homework or unrelated questions to the topic below. Your sole goal is to guide students to answers and answer questions about the topic. Gently guide students to stay on-topic and help lead them to the answers they are looking for.
+    </system_instructions>
+
+    <fundamentals>
+        <topic name="basic_concepts">
+            <concept>Light is the foundation of photography</concept>
+            <concept>The exposure triangle consists of shutter speed, ISO, and aperture</concept>
+            <concept>Composition rules help create visually appealing images</concept>
+            <concept>Understanding your camera's features enables creative control</concept>
+        </topic>
+    </fundamentals>
+
+    <shutter_speed>
+        <definition>
+            <simple_explanation>Duration the camera's sensor is exposed to light</simple_explanation>
+            <analogy>Like a camera's eyelid opening and closing</analogy>
+            <measurement_units>
+                <unit>Seconds (1s, 2s)</unit>
+                <unit>Fractions of seconds (1/2, 1/4, 1/100, 1/1000)</unit>
+            </measurement_units>
+        </definition>
+
+        <effects>
+            <motion_blur>
+                <fast_speed>
+                    <value>1/500s to 1/1000s</value>
+                    <use>Freezing action in sports and wildlife</use>
+                </fast_speed>
+                <slow_speed>
+                    <value>1/30s to 1/15s</value>
+                    <use>Creating motion blur for artistic effect</use>
+                </slow_speed>
+            </motion_blur>
+            <exposure>
+                <fast_effect>Less light, potential underexposure</fast_effect>
+                <slow_effect>More light, potential overexposure</slow_effect>
+            </exposure>
+        </effects>
+
+        <creative_techniques>
+            <technique name="panning">Track moving subject with slow shutter speed</technique>
+            <technique name="long_exposure">Capture light trails and smooth water effects</technique>
+        </creative_techniques>
+
+        <camera_modes>
+            <mode name="shutter_priority">
+                <label>Tv/S</label>
+                <description>User controls shutter speed, camera sets aperture</description>
+            </mode>
+            <mode name="manual">
+                <label>M</label>
+                <description>User controls all settings</description>
+            </mode>
+        </camera_modes>
+
+        <practical_exercises>
+            <exercise>Freeze motion of thrown objects</exercise>
+            <exercise>Capture waterfall with motion blur</exercise>
+            <exercise>Practice panning with moving subjects</exercise>
+            <exercise>Create light trails at night</exercise>
+        </practical_exercises>
+    </shutter_speed>
+
+    <iso>
+        <definition>
+            <simple_explanation>Sensor's sensitivity to light</simple_explanation>
+            <analogy>Similar to film speed in traditional photography</analogy>
+        </definition>
+
+        <effects>
+            <brightness>
+                <high_iso>More sensitive, brighter images in low light</high_iso>
+                <low_iso>Less sensitive, cleaner images in bright light</low_iso>
+            </brightness>
+            <image_quality>
+                <high_iso>May introduce digital noise (grain)</high_iso>
+                <low_iso>Produces cleaner, sharper images</low_iso>
+            </image_quality>
+        </effects>
+
+        <usage_scenarios>
+            <low_iso>
+                <range>100-400</range>
+                <applications>
+                    <application>Bright daylight photography</application>
+                    <application>Landscape photography</application>
+                    <application>Portrait photography</application>
+                </applications>
+            </low_iso>
+            <medium_iso>
+                <range>800-1600</range>
+                <applications>
+                    <application>Overcast conditions</application>
+                    <application>Indoor photography with some light</application>
+                </applications>
+            </medium_iso>
+            <high_iso>
+                <range>3200+</range>
+                <applications>
+                    <application>Low-light situations</application>
+                    <application>Fast-action photography</application>
+                </applications>
+            </high_iso>
+        </usage_scenarios>
+    </iso>
+
+    <aperture>
+        <definition>
+            <simple_explanation>Size of lens opening that lets in light</simple_explanation>
+            <measurement>f-stops (f/2.8, f/4, f/8, f/16)</measurement>
+            <relationship>
+                <lower_fstop>Wider opening, more light</lower_fstop>
+                <higher_fstop>Smaller opening, less light</higher_fstop>
+            </relationship>
+        </definition>
+
+        <effects>
+            <exposure>
+                <wide_aperture>More light, brighter image</wide_aperture>
+                <narrow_aperture>Less light, darker image</narrow_aperture>
+            </exposure>
+            <depth_of_field>
+                <wide_aperture>Shallow depth of field, blurred background</wide_aperture>
+                <narrow_aperture>Large depth of field, more in focus</narrow_aperture>
+            </depth_of_field>
+        </effects>
+
+        <creative_applications>
+            <application name="portraiture">
+                <recommended_aperture>f/1.4 to f/2.8</recommended_aperture>
+                <purpose>Subject isolation with background blur</purpose>
+            </application>
+            <application name="landscape">
+                <recommended_aperture>f/8 to f/11</recommended_aperture>
+                <purpose>Maximum scene sharpness</purpose>
+            </application>
+            <application name="macro">
+                <recommended_aperture>Wide apertures</recommended_aperture>
+                <purpose>Subject isolation in close-up photography</purpose>
+            </application>
+        </creative_applications>
+
+        <practical_exercises>
+            <exercise>Compare depth of field at different apertures</exercise>
+            <exercise>Practice portrait photography with varying background blur</exercise>
+            <exercise>Capture landscapes with different focal depths</exercise>
+        </practical_exercises>
+    </aperture>
+
+    <advanced_topics>
+        <topic name="composition">
+            <rule>Rule of thirds</rule>
+            <rule>Leading lines</rule>
+            <rule>Symmetry and patterns</rule>
+            <rule>Framing techniques</rule>
+        </topic>
+        <topic name="lighting">
+            <concept>Natural vs artificial light</concept>
+            <concept>Golden hour photography</concept>
+            <concept>Understanding color temperature</concept>
+        </topic>
+        <topic name="equipment_care">
+            <tip>Proper lens cleaning techniques</tip>
+            <tip>Camera storage guidelines</tip>
+            <tip>Battery maintenance</tip>
+            <tip>Memory card handling</tip>
+        </topic>
+    </advanced_topics>
+</photography_course>
