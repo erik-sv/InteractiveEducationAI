@@ -120,15 +120,21 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
         useSilencePrompt: false
       });
 
+      // Wait a short moment for voice chat to initialize
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Send intro message if provided
-      if (introMessage) {
-        await avatar.current.speak({ 
-          text: introMessage, 
-          taskType: TaskType.REPEAT, 
-          taskMode: TaskMode.SYNC 
-        }).catch((e) => {
+      if (introMessage && introMessage.trim()) {
+        console.log("Sending intro message:", introMessage);
+        try {
+          await avatar.current.speak({ 
+            text: introMessage, 
+            taskType: TaskType.REPEAT, 
+            taskMode: TaskMode.SYNC 
+          });
+        } catch (e) {
           console.error("Error sending intro message:", e);
-        });
+        }
       }
     } catch (error) {
       console.error("Error starting avatar session:", error);

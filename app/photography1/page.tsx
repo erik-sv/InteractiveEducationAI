@@ -13,16 +13,36 @@ export default function Photography1() {
   useEffect(() => {
     const loadKnowledgeBase = async () => {
       try {
-        const response = await fetch('/api/get-photography1-knowledge-base');
+        const response = await fetch("/api/get-photography1-knowledge-base");
         const data = await response.json();
+
         if (data.knowledgeBase) {
           setKnowledgeBase(data.knowledgeBase);
-        }
-        if (data.introMessage) {
-          setIntroMessage(data.introMessage);
+
+          // Extract intro message from XML structure
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(data.knowledgeBase, "text/xml");
+          const introMessageElement = xmlDoc.querySelector("intro_message");
+
+          if (introMessageElement) {
+            setIntroMessage(introMessageElement.textContent || "");
+            if (process.env.NODE_ENV === "development") {
+              console.log(
+                "Extracted intro message:",
+                introMessageElement.textContent,
+              );
+            }
+          } else {
+            if (process.env.NODE_ENV === "development") {
+              console.error("No intro_message tag found in XML.");
+            }
+            setIntroMessage(
+              "Welcome! Please wait while we load your personalized experience.",
+            );
+          }
         }
       } catch (error) {
-        console.error('Error loading photography knowledge base:', error);
+        console.error("Error loading knowledge base:", error);
       }
     };
 
@@ -30,7 +50,7 @@ export default function Photography1() {
   }, []);
 
   const handleDonate = () => {
-    window.open('https://example.com/donate', '_blank');
+    window.open('https://donate.stripe.com/dR6eXK3mXdF70A83cc', '_blank');
   };
 
   return (

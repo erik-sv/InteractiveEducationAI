@@ -1,11 +1,11 @@
 import "@/styles/globals.css";
 import clsx from "clsx";
 import { Metadata, Viewport } from "next";
+import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
 
 import { Providers } from "./providers";
-import NavBar from "@/components/Navbar";
 
-import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
+import NavBar from "@/components/NavBar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -18,12 +18,12 @@ const fontMono = FontMono({
 });
 
 export const metadata: Metadata = {
-  title: 'AI Education Platform',
-  description: 'Personalized AI tutoring support for students',
+  title: "AI Education Platform",
+  description: "Personalized AI tutoring support for students",
   icons: [
-    { rel: 'icon', url: '/favicon.ico' },
-    { rel: 'apple-touch-icon', url: '/favicon.ico' },
-    { rel: 'shortcut icon', url: '/favicon.ico' }
+    { rel: "icon", url: "/favicon.ico" },
+    { rel: "apple-touch-icon", url: "/favicon.ico" },
+    { rel: "shortcut icon", url: "/favicon.ico" },
   ],
 };
 
@@ -42,13 +42,17 @@ export default function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      lang="en"
       className={`dark ${fontSans.variable} ${fontMono.variable} font-sans`}
+      lang="en"
     >
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link href="/favicon.ico" rel="icon" sizes="any" />
       </head>
-      <body className={clsx("min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 antialiased")}>
+      <body
+        className={clsx(
+          "min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 antialiased",
+        )}
+      >
         <Providers>
           <NavBar />
           <main className="relative flex flex-col min-h-screen w-full">
