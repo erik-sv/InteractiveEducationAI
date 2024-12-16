@@ -6,65 +6,102 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button
 } from "@nextui-org/react";
-import { GithubIcon, HeyGenLogo } from "./Icons";
-import { ThemeSwitch } from "./ThemeSwitch";
+import { usePathname } from "next/navigation";
+import NextLink from "next/link";
+import Image from "next/image";
+import { ChevronDown } from "lucide-react";
 
 export default function NavBar() {
+  const pathname = usePathname();
+
   return (
-    <Navbar className="w-full">
+    <Navbar className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800">
       <NavbarBrand>
-        <Link isExternal aria-label="HeyGen" href="https://app.heygen.com/">
-          <HeyGenLogo />
-        </Link>
-        <div className="bg-gradient-to-br from-sky-300 to-indigo-500 bg-clip-text ml-4">
-          <p className="text-xl font-semibold text-transparent">
-            HeyGen Interactive Avatar SDK NextJS Demo
-          </p>
-        </div>
+        <NextLink href="/" className="flex items-center gap-4">
+          <Image
+            src="/LogoHorizontal WEB White.png"
+            alt="AI Education Platform"
+            width={200}
+            height={40}
+            priority
+            className="h-8 w-auto"
+          />
+        </NextLink>
       </NavbarBrand>
-      <NavbarContent justify="center">
-        <NavbarItem className="flex flex-row items-center gap-4">
-          <Link
-            isExternal
-            color="foreground"
-            href="https://labs.heygen.com/interactive-avatar"
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem isActive={pathname === "/"}>
+          <NextLink 
+            href="/" 
+            className={`text-${pathname === "/" ? "primary" : "foreground"}`}
           >
-            Avatars
-          </Link>
-          <Link
-            isExternal
-            color="foreground"
-            href="https://docs.heygen.com/reference/list-voices-v2"
-          >
-            Voices
-          </Link>
-          <Link
-            isExternal
-            color="foreground"
-            href="https://docs.heygen.com/reference/new-session-copy"
-          >
-            API Docs
-          </Link>
-          <Link
-            isExternal
-            color="foreground"
-            href="https://help.heygen.com/en/articles/9182113-interactive-avatar-101-your-ultimate-guide"
-          >
-            Guide
-          </Link>
-          <Link
-            isExternal
-            aria-label="Github"
-            href="https://github.com/HeyGen-Official/StreamingAvatarSDK"
-            className="flex flex-row justify-center gap-1 text-foreground"
-          >
-            <GithubIcon className="text-default-500" />
-            SDK
-          </Link>
-          <ThemeSwitch />
+            Home
+          </NextLink>
+        </NavbarItem>
+        <NavbarItem>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                disableRipple
+                className="p-0 bg-transparent data-[hover=true]:bg-transparent"
+                endContent={<ChevronDown className="text-small" />}
+                radius="sm"
+                variant="light"
+              >
+                Examples
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Example pages"
+              className="w-[200px]"
+              itemClasses={{
+                base: "gap-4",
+              }}
+            >
+              <DropdownItem 
+                key="photography1"
+                textValue="Photography 1"
+              >
+                <NextLink 
+                  href="/photography1" 
+                  className="w-full"
+                >
+                  Photography 1
+                </NextLink>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
+      <NavbarContent justify="end">
+        <NavbarMenuToggle className="sm:hidden" />
+      </NavbarContent>
+      <NavbarMenu className="bg-gray-900/95 backdrop-blur-md pt-6">
+        <NavbarMenuItem>
+          <NextLink 
+            href="/" 
+            className={`w-full ${pathname === "/" ? "text-primary" : "text-foreground"}`}
+          >
+            Home
+          </NextLink>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <NextLink 
+            href="/photography1" 
+            className={`w-full ${pathname === "/photography1" ? "text-primary" : "text-foreground"}`}
+          >
+            Photography 1
+          </NextLink>
+        </NavbarMenuItem>
+      </NavbarMenu>
     </Navbar>
   );
 }

@@ -35,7 +35,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-gray-900 to-gray-800">
+    <div className="min-h-screen w-full flex flex-col">
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-[900px] w-full mx-auto py-8 space-y-8">
           <div className="text-center space-y-4">

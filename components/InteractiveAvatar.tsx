@@ -265,7 +265,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                       className="btn-solid rounded-lg min-w-0 px-2 sm:px-4"
                       size="sm"
                       variant="shadow"
-                      onClick={handleToggleMic}
+                      onPress={handleToggleMic}
                     >
                       {isMicMuted ? "Unmute" : "Mute"}
                     </Button>
@@ -273,7 +273,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                       className="btn-solid rounded-lg min-w-0 px-2 sm:px-4"
                       size="sm"
                       variant="shadow"
-                      onClick={handleInterrupt}
+                      onPress={handleInterrupt}
                     >
                       Stop
                     </Button>
@@ -281,7 +281,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                       className="btn-danger rounded-lg min-w-0 px-2 sm:px-4"
                       size="sm"
                       variant="shadow"
-                      onClick={endSession}
+                      onPress={endSession}
                     >
                       End
                     </Button>
@@ -289,7 +289,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                       className="btn-solid rounded-lg min-w-0 w-8 sm:w-10"
                       size="sm"
                       variant="shadow"
-                      onClick={handleToggleFullscreen}
+                      onPress={handleToggleFullscreen}
                       isIconOnly
                     >
                       <BsArrowsFullscreen className="text-base sm:text-lg" />
@@ -306,6 +306,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                     src={`/${AVATARS.find(a => a.avatar_id === avatarId)?.name}_avatar_preview.webp`}
                     alt={`${AVATARS.find(a => a.avatar_id === avatarId)?.name} avatar preview`}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-contain"
                     priority
                   />
@@ -339,7 +340,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
                 <Button
                   className="btn-primary w-full h-14 text-lg"
                   size="lg"
-                  onClick={startSession}
+                  onPress={startSession}
                   isLoading={isLoadingSession}
                 >
                   Start Session
