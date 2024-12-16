@@ -8,6 +8,7 @@ import { Button, Select, SelectItem } from "@nextui-org/react";
 export default function Photography1() {
   const [knowledgeBase, setKnowledgeBase] = useState<string>('');
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
+  const [introMessage, setIntroMessage] = useState<string>('');
 
   useEffect(() => {
     const loadKnowledgeBase = async () => {
@@ -16,6 +17,9 @@ export default function Photography1() {
         const data = await response.json();
         if (data.knowledgeBase) {
           setKnowledgeBase(data.knowledgeBase);
+        }
+        if (data.introMessage) {
+          setIntroMessage(data.introMessage);
         }
       } catch (error) {
         console.error('Error loading photography knowledge base:', error);
@@ -70,6 +74,7 @@ export default function Photography1() {
             <InteractiveAvatar 
               defaultAvatarId={selectedAvatar}
               knowledgeBase={knowledgeBase}
+              introMessage={introMessage}
             />
           </div>
           <div className="flex justify-center pt-4">

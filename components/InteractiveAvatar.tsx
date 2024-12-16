@@ -26,9 +26,10 @@ import {AVATARS, STT_LANGUAGE_LIST} from "@/app/lib/constants";
 interface InteractiveAvatarProps {
   defaultAvatarId?: string;
   knowledgeBase?: string;
+  introMessage?: string;
 }
 
-export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase }: InteractiveAvatarProps) {
+export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, introMessage }: InteractiveAvatarProps) {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [isLoadingRepeat, setIsLoadingRepeat] = useState(false);
   const [stream, setStream] = useState<MediaStream>();
@@ -105,7 +106,7 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase }: In
       const res = await avatar.current.createStartAvatar({
         quality: AvatarQuality.Low,
         avatarName: avatarId,
-        knowledgeBase: knowledgeBase, // Use the knowledge base directly
+        knowledgeBase: knowledgeBase,
         voice: {
           rate: 1.5,
           emotion: VoiceEmotion.EXCITED,
@@ -118,6 +119,17 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase }: In
       await avatar.current?.startVoiceChat({
         useSilencePrompt: false
       });
+
+      // Send intro message if provided
+      if (introMessage) {
+        await avatar.current.speak({ 
+          text: introMessage, 
+          taskType: TaskType.REPEAT, 
+          taskMode: TaskMode.SYNC 
+        }).catch((e) => {
+          console.error("Error sending intro message:", e);
+        });
+      }
     } catch (error) {
       console.error("Error starting avatar session:", error);
       setDebug(error instanceof Error ? error.message : 'An unknown error occurred');
