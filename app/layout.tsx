@@ -6,6 +6,8 @@ import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
 import { Providers } from "./providers";
 
 import NavBar from "@/components/NavBar";
+import ZohoSalesIQ from "@/components/ZohoSalesIQ";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -47,6 +49,7 @@ export default function RootLayout({
     >
       <head>
         <link href="/favicon.ico" rel="icon" sizes="any" />
+        <GoogleAnalytics />
       </head>
       <body
         className={clsx(
@@ -59,6 +62,7 @@ export default function RootLayout({
             {children}
           </main>
         </Providers>
+        <ZohoSalesIQ />
       </body>
     </html>
   );

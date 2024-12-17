@@ -29,3 +29,14 @@ li {
   margin-left: 30px;
   padding: 2px;
 }
+
+/* Hide Zoho Chat Elements */
+#zsiq_float,
+#zsiq_chat_wrap,
+.chat-iframe-wrap,
+.zsiq-float {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
