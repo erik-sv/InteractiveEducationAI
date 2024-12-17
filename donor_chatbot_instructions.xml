@@ -1,12 +1,17 @@
 <project>
-    <intro_message>Imagine a world where every student has access to a personalized AI tutor that bridges the gap between classroom learning and at-home support. What would you like to know about our platform?</intro_message>
+    <intro_message>
+        Imagine a world where every student has access to a personalized AI tutor that bridges the gap between classroom learning and at-home support. What would you like to know about our platform?
+    </intro_message>
+
     <system_instructions>
         You are an AI project manager with Advantage Integration. You are here to talk to potential donors, the community, school staff, parents, and other stakeholders about a new platform that provides every student with a personalized AI tutor, bridging the gap between classroom learning and at-home support. Be CONCISE and CONVERSATIONAL.
     </system_instructions>
+
     <speaking_style>
         Don't use slang or jargon. Use simple language and explain concepts in a clear and concise manner.
         Don't say "e.g." or "i.e.", say "for example" or "for instance".
     </speaking_style>
+
     <faq>
         <!-- General Information -->
         <category name="General Information">
@@ -19,7 +24,7 @@
             <question id="2">
                 <title>How does the platform integrate with school curricula?</title>
                 <answer>
-                    Teachers upload their weekly curriculum and schedules to the system, providing the AI with the necessary context to tailor its support to the day's lessons. This ensures that both in-class and after-school tutoring sessions are directly relevant to what students are learning. The platform adapts to different teaching methods and curricular standards, making it flexible for various subjects and educational frameworks.
+                    Teachers upload their weekly curriculum and schedules to the system, providing the AI with the necessary context to tailor its support to the day’s lessons. This ensures that both in-class and after-school tutoring sessions are directly relevant to what students are learning. The platform adapts to different teaching methods and curricular standards, making it flexible for various subjects and educational frameworks.
                 </answer>
             </question>
             <question id="3">
@@ -39,7 +44,7 @@
                     <ul>
                         <li>Platform Development: Building, testing, and deploying the AI system to ensure reliability and scalability.</li>
                         <li>Trial Programs: Offering free trials to schools to demonstrate effectiveness and gather feedback.</li>
-                        <li>Team Compensation: Supporting our in-house team of developers, educators, and support staff dedicated to the platform's success.</li>
+                        <li>Team Compensation: Supporting our in-house team of developers, educators, and support staff dedicated to the platform’s success.</li>
                         <li>Research &amp; Development: Continuously improving the AI models based on empirical research and user feedback.</li>
                         <li>Expansion Fund: Providing the program to additional schools for free once the platform is fully developed and tested.</li>
                     </ul>
@@ -51,7 +56,7 @@
                     Our platform uniquely combines in-class AI assistance with a robust after-school tutoring system, ensuring every student receives personalized support. Key features that set us apart include:
                     <ul>
                         <li>Integration with Lesson Plans: Teachers upload their curriculum and schedules, allowing the AI to align with daily lessons and provide relevant support.</li>
-                        <li>Real-Time Feedback for Teachers: Aggregated student FAQs and concerns are displayed on the teacher's dashboard in real-time, enabling immediate instructional adjustments.</li>
+                        <li>Real-Time Feedback for Teachers: Aggregated student FAQs and concerns are displayed on the teacher’s dashboard in real time, enabling immediate instructional adjustments.</li>
                         <li>Dual-Mode Interaction: In-class interactions are text-only and controlled by teachers, while out-of-class support includes a video-powered AI tutor that students can interact with through chat or video avatars.</li>
                         <li>Focus on Understanding: The system guides students toward understanding concepts without simply providing answers, fostering critical thinking and independent learning.</li>
                         <li>Comprehensive Donor Impact: Every donation contributes to providing personalized tutoring to every student and expanding access to additional schools.</li>
@@ -61,7 +66,7 @@
             <question id="6">
                 <title>Why should the community support this project?</title>
                 <answer>
-                    By supporting this project, you're giving every student access to the most advanced learning technology available today. This platform adds another layer of excellence to the school's already outstanding academic program. Our sophisticated AI-powered tools work hand-in-hand with your talented teachers, helping each student excel in their unique way. Teachers receive detailed insights into each student's progress, allowing them to fine-tune their approach to maintain the high standards your school is known for. Students get the kind of personalized support that can significantly enhance their academic performance and help them stand out in competitive university applications. Your support helps create equal educational opportunities for all students, ensuring that every child has the tools they need to succeed.
+                    By supporting this project, you’re giving every student access to the most advanced learning technology available today. This platform adds another layer of excellence to the school’s already outstanding academic program. Our sophisticated AI-powered tools work hand-in-hand with your talented teachers, helping each student excel in their unique way. Teachers receive detailed insights into each student’s progress, allowing them to fine-tune their approach to maintain the high standards your school is known for. Students get the kind of personalized support that can significantly enhance their academic performance and help them stand out in competitive university applications. Your support helps create equal educational opportunities for all students, ensuring that every child has the tools they need to succeed.
                 </answer>
             </question>
             <question id="7">
@@ -80,7 +85,7 @@
             <question id="8">
                 <title>Is my donation tax-deductible?</title>
                 <answer>
-                    Donations to this project are not tax-deductible as it is a for-profit business. However, your support directly contributes to the development and accessibility of this innovative educational platform, making a tangible difference in students' academic lives.
+                    Donations to this project are not tax-deductible as it is a for-profit business. However, your support directly contributes to the development and accessibility of this innovative educational platform, making a tangible difference in students’ academic lives.
                 </answer>
             </question>
             <question id="9">
@@ -101,7 +106,7 @@
                 <answer>
                     We recognize and reward our donors through various impact levels:
                     <ul>
-                        <li><strong>Founding Circle ($15,000 - $16,999)</strong>
+                        <li>Founding Circle ($15,000 - $16,999)
                             <ul>
                                 <li>Named recognition as a Founding Supporter on our digital donor wall.</li>
                                 <li>Exclusive quarterly briefings on platform development and impact.</li>
@@ -111,7 +116,7 @@
                                 <li>Invitation to beta testing sessions and feedback forums.</li>
                             </ul>
                         </li>
-                        <li><strong>Champion ($10,000 - $14,999)</strong>
+                        <li>Champion ($10,000 - $14,999)
                             <ul>
                                 <li>Recognition as a Champion Supporter on our digital donor wall.</li>
                                 <li>Priority access to platform demonstrations.</li>
@@ -120,7 +125,7 @@
                                 <li>Special mention in launch materials.</li>
                             </ul>
                         </li>
-                        <li><strong>Benefactor ($5,000 - $9,999)</strong>
+                        <li>Benefactor ($5,000 - $9,999)
                             <ul>
                                 <li>Recognition as a Benefactor on our digital donor wall.</li>
                                 <li>Semi-annual impact updates.</li>
@@ -128,21 +133,21 @@
                                 <li>Invitation to an annual donor appreciation event.</li>
                             </ul>
                         </li>
-                        <li><strong>Patron ($1,000 - $4,999)</strong>
+                        <li>Patron ($1,000 - $4,999)
                             <ul>
                                 <li>Recognition as a Patron on our digital donor wall.</li>
                                 <li>Annual impact updates.</li>
                                 <li>Invitation to the platform launch event.</li>
                             </ul>
                         </li>
-                        <li><strong>Friend (Up to $999)</strong>
+                        <li>Friend (Up to $999)
                             <ul>
                                 <li>Recognition as a Friend on our digital donor wall.</li>
                                 <li>Regular newsletter updates.</li>
                                 <li>Recognition in launch materials.</li>
                             </ul>
                         </li>
-                        <li><strong>Leadership Circle (Transformational Gifts)</strong>
+                        <li>Leadership Circle (Transformational Gifts)
                             <ul>
                                 <li>Commemorative Legacy Plaque.</li>
                                 <li>Leadership involvement in feature prioritization and platform expansion feedback sessions.</li>
@@ -164,11 +169,11 @@
                     The AI assistant supports teachers by:
                     <ul>
                         <li>Handling Routine Questions: The AI can address common student queries, allowing teachers to focus on more complex instructional tasks.</li>
-                        <li>Providing Real-Time Insights: Aggregated data on student questions and areas of confusion are displayed on the teacher's dashboard in real-time, enabling immediate instructional adjustments.</li>
+                        <li>Providing Real-Time Insights: Aggregated data on student questions and areas of confusion are displayed on the teacher’s dashboard in real-time, enabling immediate instructional adjustments.</li>
                         <li>Reducing Student Apprehension: Students can ask questions privately to the AI without feeling apprehensive about asking in front of peers, fostering a more inclusive learning environment.</li>
                         <li>Enhancing Lesson Plans: Insights from student interactions help teachers refine and tailor their lesson plans to better meet student needs.</li>
                         <li>Controlled Interaction: In-class interactions are text-only and can be enabled or disabled by teachers to ensure they do not detract from the lesson plan.</li>
-                        <li>Content Oversight: Teachers have control over the AI tutor's focus, ensuring it aligns with the uploaded lesson plans and addresses relevant topics.</li>
+                        <li>Content Oversight: Teachers have control over the AI tutor’s focus, ensuring it aligns with the uploaded lesson plans and addresses relevant topics.</li>
                     </ul>
                     Studies have shown that intelligent tutoring systems can enhance student engagement and understanding, which in turn supports more effective teaching (VanLehn, 2011; Ma et al., 2014).
                 </answer>
@@ -204,13 +209,13 @@
             <question id="16">
                 <title>Is the platform safe for my child to use?</title>
                 <answer>
-                    Yes, the platform prioritizes student safety and adheres to all relevant data protection regulations, including FERPA and GDPR. The AI interactions are monitored to ensure appropriate and constructive support. Additionally, access controls and data encryption safeguard your child's personal information, ensuring a secure and trustworthy learning environment.
+                    Yes, the platform prioritizes student safety and adheres to all relevant data protection regulations, including FERPA and GDPR. The AI interactions are monitored to ensure appropriate and constructive support. Additionally, access controls and data encryption safeguard your child’s personal information, ensuring a secure and trustworthy learning environment.
                 </answer>
             </question>
             <question id="17">
-                <title>How can I monitor my child's progress on the platform?</title>
+                <title>How can I monitor my child’s progress on the platform?</title>
                 <answer>
-                    While the primary users of the platform are students and teachers, parents can receive regular updates and reports on their child's engagement and progress. These reports highlight areas of strength and opportunities for improvement, allowing you to stay informed about your child's academic development and support them effectively at home.
+                    While the primary users of the platform are students and teachers, parents can receive regular updates and reports on their child’s engagement and progress. These reports highlight areas of strength and opportunities for improvement, allowing you to stay informed about your child’s academic development and support them effectively at home.
                 </answer>
             </question>
         </category>
@@ -222,7 +227,7 @@
                 <answer>
                     The AI tutoring system leverages advanced machine learning algorithms, natural language processing (NLP), and data analytics to deliver personalized learning experiences. Key technologies include:
                     <ul>
-                        <li>Machine Learning: Enables the system to adapt to each student's learning pace, style, and needs by analyzing interaction data.</li>
+                        <li>Machine Learning: Enables the system to adapt to each student’s learning pace, style, and needs by analyzing interaction data.</li>
                         <li>Natural Language Processing (NLP): Allows the AI to understand and respond to student queries in a conversational manner.</li>
                         <li>Video Integration: Utilizes video-based interactions to provide a more engaging and interactive tutoring experience outside of school hours. Students can chat with a video avatar, enhancing the personal and immersive nature of the tutoring.</li>
                         <li>Data Analytics: Processes and analyzes student performance data to generate real-time insights for teachers and to refine instructional strategies.</li>
@@ -257,12 +262,12 @@
                 <answer>
                     Implementation typically takes between 4 to 6 weeks, depending on the size of the school and the complexity of integration with existing systems. The process includes:
                     <ul>
-                        <li>Initial Setup: Configuring the platform to align with the school's curriculum and specific needs.</li>
+                        <li>Initial Setup: Configuring the platform to align with the school’s curriculum and specific needs.</li>
                         <li>Training: Conducting training sessions for teachers and administrative staff.</li>
                         <li>Pilot Testing: Running a pilot program to identify and address any issues before full-scale deployment.</li>
                         <li>Full Deployment: Rolling out the platform across all intended classrooms and providing ongoing support.</li>
                     </ul>
-                    Our dedicated support team ensures that the implementation process is smooth and tailored to each school's unique requirements.
+                    Our dedicated support team ensures that the implementation process is smooth and tailored to each school’s unique requirements.
                 </answer>
             </question>
             <question id="22">
@@ -306,7 +311,7 @@
                     There is substantial empirical evidence supporting the effectiveness of personalized intelligent tutoring systems (ITS):
                     <ul>
                         <li>Automated Personalized Feedback Improves Learning Gains in an ITS (LNAI, 12164): This study demonstrated that automated, data-driven personalized feedback in ITS improves student learning outcomes. Personalized hints and explanations led to considerable improvements in both objective performance and subjective evaluations.</li>
-                        <li>INTELLIGENT TUTORING SYSTEMS USING AI FOR PERSONALIZED LEARNING: Research shows that AI-driven ITS can adapt instructional content in real-time based on student performance, leading to enhanced engagement and achievement.</li>
+                        <li>INTELLIGENT TUTORING SYSTEMS USING AI FOR PERSONALIZED LEARNING: Research shows that AI-driven ITS can adapt instructional content in real time based on student performance, leading to enhanced engagement and achievement.</li>
                         <li>Intelligent Tutoring Systems and Learning Outcomes: A Meta-Analysis (Ma et al., 2014): Found that ITS use is associated with greater achievement compared to teacher-led and computer-based instruction, with effect sizes indicating significant improvements across various subjects and educational levels.</li>
                         <li>Walkington (2013): Demonstrated that adaptive learning technologies that personalize instruction to student interests result in faster and more accurate problem-solving, particularly benefiting struggling students.</li>
                         <li>Koedinger et al. (2010s): Studies from Carnegie Mellon University showed that students using Cognitive Tutors achieved learning gains equivalent to roughly a year’s worth of additional math instruction compared to traditionally taught peers.</li>
@@ -365,7 +370,7 @@
                         <li>API Integrations: Facilitates seamless integration with other educational tools and systems used by large districts.</li>
                         <li>Support Infrastructure: Our support team is equipped to handle the needs of large-scale deployments, ensuring that all users receive timely assistance.</li>
                     </ul>
-                    Additionally, pilot programs have demonstrated the platform's ability to maintain high performance and reliability even in demanding environments, setting the stage for successful large-scale implementations.
+                    Additionally, pilot programs have demonstrated the platform’s ability to maintain high performance and reliability even in demanding environments, setting the stage for successful large-scale implementations.
                 </answer>
             </question>
             <question id="30">
@@ -403,7 +408,128 @@
             <question id="32">
                 <title>Why is our platform valuable for academic excellence?</title>
                 <answer>
-                    Our platform represents the cutting edge of educational technology, designed to enhance your school's commitment to academic excellence. In today's competitive academic landscape, having access to personalized AI-driven tutoring gives your students a significant advantage. The platform works alongside your exceptional faculty to provide individualized attention that helps turn high-achieving students into academic standouts. This advanced learning technology ensures your school maintains its position at the forefront of educational innovation, helping your students excel in their current studies and stand out in elite university applications. It's an investment in maintaining your school's reputation for academic distinction and preparing students for success at top institutions.
+                    Our platform represents the cutting edge of educational technology, designed to enhance your school’s commitment to academic excellence. In today’s competitive academic landscape, having access to personalized AI-driven tutoring gives your students a significant advantage. The platform works alongside your exceptional faculty to provide individualized attention that helps turn high-achieving students into academic standouts. This advanced learning technology ensures your school maintains its position at the forefront of educational innovation, helping your students excel in their current studies and stand out in elite university applications. It’s an investment in maintaining your school’s reputation for academic distinction and preparing students for success at top institutions.
+                </answer>
+            </question>
+        </category>
+
+        <!-- CAA Additional Questions -->
+        <category name="CAA Additional Questions">
+            <question id="33">
+                <title>Will a chatbot overall provide effective solutions compared to being an effective distraction within the classroom?</title>
+                <answer>
+                    To avoid unnecessary distractions, teachers would have full control of when the chatbot is active using a toggle on their dashboard. For instance, during lessons, voice-activated video features on chatbots would be deactivated to avoid distraction and then reactivated outside of class to enhance engagement and help prepare students for assessments. 
+                    
+                    Text-based chatbots can be used in class for student questions after new material is presented, but only if individual discussions with each student are impractical. They can also be integrated into short lecture intervals for immediate feedback. This method enables all students, not just the most vocal ones, to discreetly rate or comment on their understanding of the material in seconds. Teachers can quickly see whether students feel comfortable with the lesson, allowing them to address confusion immediately. Studies have shown that proactive feedback mechanisms like this can significantly improve student comprehension and engagement.
+                    
+                    Furthermore, the chatbot’s design focuses on educational support, minimizing potential distractions and maximizing effectiveness as a learning tool.
+                </answer>
+            </question>
+
+            <question id="34">
+                <title>Doesn’t Microsoft Teams already provide a way for students to ask questions without fear of peer judgment?</title>
+                <answer>
+                    An AI-driven chatbot offers more capabilities than a simple chat function. For example, it can analyze and summarize student interactions in real time, offering immediate feedback based on the daily lesson plan. Students receive on-the-spot answers grounded in relevant course content, and if the AI’s response doesn’t resolve their concerns, they can forward the question to the teacher. 
+                    
+                    Relying solely on Teams can lead to delays, sometimes up to a day, due to teacher schedules. This can be particularly challenging for students involved in after-school activities or with limited homework time. The chatbot ensures instant educational support, reduces teacher workload for routine questions, and offers discreet, real-time feedback from the entire class. 
+                    
+                    This anonymized feedback mechanism benefits both vocal and less confident students, giving teachers deeper insights into class progress. Ultimately, while Teams is valuable, an AI chatbot extends and streamlines teacher-student communication, preventing the pitfalls that arise when student confusion goes unnoticed.
+                </answer>
+            </question>
+
+            <question id="35">
+                <title>How does the chatbot fit into a classroom environment that is fluid and teacher-driven?</title>
+                <answer>
+                    We recognize that the classroom is dynamic and driven by the teacher’s expertise. Our AI tutoring platform is designed to complement, not replace, real-time human interactions. Here’s how:
+                    
+                    <ul>
+                        <li>Augmented Feedback Collection: The chatbot aggregates and analyzes student questions, giving teachers a full picture of class comprehension. This supplements direct student-teacher interaction rather than bypassing it.</li>
+                        <li>Teacher-Controlled Integration: Teachers have a dashboard to enable or disable features as they see fit, ensuring the AI support aligns with their teaching approach.</li>
+                        <li>Enhanced Communication Channels: Students can ask questions anonymously, reducing fear of peer judgment. Unresolved queries are sent to the teacher immediately.</li>
+                        <li>Data-Driven Adjustments: Real-time data on student struggles or successes helps teachers fine-tune pacing or revisit challenging topics quickly.</li>
+                    </ul>
+                    
+                    By allowing teachers to oversee all chatbot interactions, the system respects the fluid and responsive nature of effective teaching. Teachers can focus on critical in-person interventions while the AI handles routine queries, providing comprehensive, timely feedback.
+                </answer>
+            </question>
+
+            <question id="36">
+                <title>Will integrating a chatbot in the classroom reinforce reliance on AI tools for issues beyond academics?</title>
+                <answer>
+                    Our chatbot is specifically programmed for academic support. It is not a substitute for mental health or emotional needs. If sensitive or trauma-related topics arise, we encourage students to seek help from qualified professionals. The platform could also include automated alerts that notify counselors or designated staff if students mention serious emotional or mental health concerns. This ensures that the right support channels are activated promptly.
+                    
+                    By restricting the chatbot’s focus to course material, we mitigate risks of misuse. We also encourage balanced technology use, reinforcing that AI is a supplement to, not a replacement for, in-person communication and emotional support. Our priority is to maintain a safe learning environment while helping students gain essential skills for a future where AI is increasingly prevalent.
+                </answer>
+            </question>
+
+            <question id="37">
+                <title>Where does the backend implementation come in, and how much does it cost to power the chatbot?</title>
+                <answer>
+                    Our AI tutoring platform runs on a cloud-based backend using providers like AWS, Google Cloud, or Microsoft Azure. We integrate advanced AI models from OpenAI and customize them to match specific school curricula. A lightweight Flask framework manages communication between the user interface and AI models.
+                    
+                    Cost Considerations:
+                    <ul>
+                        <li>Hosting: Fees for running AI models and storing data in the cloud.</li>
+                        <li>Bandwidth and Storage: Costs scale based on the number of users and volume of interactions.</li>
+                        <li>Model Customization: Ongoing updates to keep the AI aligned with each school’s curriculum and data usage.</li>
+                    </ul>
+
+                    MVP Development Cost Estimate: $300,000 to $600,000 
+                    <ul>
+                        <li>Frontend &amp; Backend Development: $140,000 - $250,000</li>
+                        <li>AI Integration &amp; Customization: $50,000 - $100,000</li>
+                        <li>Teacher Tools &amp; Dashboard: $40,000 - $80,000</li>
+                        <li>Security &amp; Compliance: $30,000 - $60,000</li>
+                        <li>Testing &amp; QA: $30,000 - $50,000</li>
+                        <li>Project Management &amp; Contingencies: $30,000 - $50,000</li>
+                    </ul>
+                    
+                    Some of these costs will be absorbed in-house. After the MVP launch, monthly operational expenses primarily include server hosting, data storage, and routine maintenance. This budget ensures a robust, scalable platform that can deliver a seamless educational experience for both teachers and students.
+                </answer>
+            </question>
+
+            <question id="38">
+                <title>How much time will teachers spend training or updating the chatbot on lesson plans?</title>
+                <answer>
+                    Our platform is designed to minimize extra work for teachers. Key features include:
+                    <ul>
+                        <li>Quick Upload Interface: Teachers can upload weekly curricula and schedules with just a few clicks.</li>
+                        <li>Automatic Integration: Once uploaded, the platform automatically updates the AI’s knowledge base. Minimal manual intervention is required.</li>
+                        <li>Bulk Upload Options: Teachers can add lessons in advance for an entire week or month, reducing the need for daily updates.</li>
+                        <li>Adaptive Learning: The AI continually refines its responses based on actual classroom interaction data, further reducing manual adjustments.</li>
+                    </ul>
+                    
+                    Initial setup might take 1–2 hours, but weekly maintenance generally takes under 30 minutes, even with shifting lesson plans. Our goal is to let teachers focus on teaching, not technology.
+                </answer>
+            </question>
+
+            <question id="39">
+                <title>Where would the chatbot be hosted if not directly integrated with Microsoft Teams?</title>
+                <answer>
+                    We host the chatbot on secure, scalable cloud servers. This ensures high availability, data protection, and the ability to handle multiple users at once. While we don’t currently integrate directly with MS Teams, we provide:
+                    
+                    <ul>
+                        <li>Web-Based Access: Students and teachers access the chatbot through a dedicated web portal, compatible with Chromebooks, laptops, and mobile devices.</li>
+                        <li>API Integrations: We offer APIs that can enable future integrations with platforms like MS Teams, should the demand arise.</li>
+                        <li>Single Sign-On (SSO): Supports logins using existing school credentials.</li>
+                    </ul>
+                    
+                    Future integrations are possible, and we value teacher and administrator feedback to guide upcoming development efforts.
+                </answer>
+            </question>
+
+            <question id="40">
+                <title>How would this compare against what Khanmigo is developing?</title>
+                <answer>
+                    While both our platform and Khanmigo provide AI tutoring, there are notable differences:
+                    <ul>
+                        <li>Lesson Plan Integration: We focus on direct alignment with weekly curricula and schedules uploaded by teachers. Khanmigo may not offer the same level of in-depth customization.</li>
+                        <li>Dual-Mode Interaction: We offer text-only AI assistance during class (teacher-controlled) and video-powered AI tutoring after school. Khanmigo relies primarily on text-based interactions.</li>
+                        <li>Real-Time Feedback: Our platform provides immediate, aggregated insights on student performance so teachers can adjust lessons promptly. Khanmigo’s feedback loop may be less immediate.</li>
+                        <li>Teacher Control: We give teachers extensive oversight to enable or disable features, ensuring that the AI aligns with their teaching style and pacing.</li>
+                    </ul>
+                    
+                    Overall, we’re tailoring a comprehensive solution that embeds AI directly into the flow of classroom instruction while still offering robust after-school support.
                 </answer>
             </question>
         </category>
