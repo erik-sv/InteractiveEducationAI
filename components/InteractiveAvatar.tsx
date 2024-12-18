@@ -56,6 +56,51 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
   const [isUserTalking, setIsUserTalking] = useState(false);
   const [isMicMuted, setIsMicMuted] = useState(false);
 
+  const [lastActivity, setLastActivity] = useState(Date.now());
+  const inactivityTimeout = useRef<NodeJS.Timeout>();
+
+  const updateLastActivity = () => {
+    setLastActivity(Date.now());
+  };
+
+  useEffect(() => {
+    if (stream) {
+      if (inactivityTimeout.current) {
+        clearTimeout(inactivityTimeout.current);
+      }
+
+      inactivityTimeout.current = setTimeout(() => {
+        console.log("Session ended due to 3 minutes of speech inactivity");
+        endSession();
+      }, 3 * 60 * 1000);
+    }
+
+    return () => {
+      if (inactivityTimeout.current) {
+        clearTimeout(inactivityTimeout.current);
+      }
+    };
+  }, [stream, lastActivity]);
+
+  useEffect(() => {
+    if (stream) {
+      const handleActivity = () => {
+        console.log("Speech activity detected, resetting timer");
+        updateLastActivity();
+      };
+
+      avatar.current?.on(StreamingEvents.USER_START, handleActivity);
+      avatar.current?.on(StreamingEvents.AVATAR_START_TALKING, handleActivity);
+
+      return () => {
+        if (avatar.current) {
+          avatar.current.off(StreamingEvents.USER_START, handleActivity);
+          avatar.current.off(StreamingEvents.AVATAR_START_TALKING, handleActivity);
+        }
+      };
+    }
+  }, [stream]);
+
   async function fetchAccessToken() {
     try {
       const response = await fetch("/api/get-access-token", {
@@ -75,71 +120,100 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
 
   async function startSession() {
     setIsLoadingSession(true);
-    const newToken = await fetchAccessToken();
-
-    avatar.current = new StreamingAvatar({
-      token: newToken,
-    });
-    avatar.current.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
-      console.log("Avatar started talking", e);
-    });
-    avatar.current.on(StreamingEvents.AVATAR_STOP_TALKING, (e) => {
-      console.log("Avatar stopped talking", e);
-    });
-    avatar.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
-      console.log("Stream disconnected");
-      endSession();
-    });
-    avatar.current?.on(StreamingEvents.STREAM_READY, (event) => {
-      console.log(">>>>> Stream ready:", event.detail);
-      setStream(event.detail);
-    });
-    avatar.current?.on(StreamingEvents.USER_START, (event) => {
-      console.log(">>>>> User started talking:", event);
-      setIsUserTalking(true);
-    });
-    avatar.current?.on(StreamingEvents.USER_STOP, (event) => {
-      console.log(">>>>> User stopped talking:", event);
-      setIsUserTalking(false);
-    });
     try {
-      const res = await avatar.current.createStartAvatar({
-        quality: AvatarQuality.Low,
-        avatarName: avatarId,
-        knowledgeBase: knowledgeBase,
-        voice: {
-          rate: 1.5,
-          emotion: VoiceEmotion.EXCITED,
+      const newToken = await fetchAccessToken();
+
+      const audioContext = new AudioContext({
+        sampleRate: 48000, 
+        latencyHint: 'interactive'
+      });
+
+      await audioContext.audioWorklet.addModule('/audioWorklet.js');
+
+      const userMedia = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
         },
-        language: language,
-        disableIdleTimeout: true,
+        video: false
       });
 
-      setData(res);
-      await avatar.current?.startVoiceChat({
-        useSilencePrompt: false
+      const sourceNode = audioContext.createMediaStreamSource(userMedia);
+      
+      const workletNode = new AudioWorkletNode(audioContext, 'audio-resampler');
+      
+      sourceNode.connect(workletNode);
+      workletNode.connect(audioContext.destination);
+
+      avatar.current = new StreamingAvatar({
+        token: newToken,
+        audioContext,
       });
 
-      // Wait a short moment for voice chat to initialize
-      await new Promise(resolve => setTimeout(resolve, 500));
+      avatar.current.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
+        console.log("Avatar started talking", e);
+      });
+      avatar.current.on(StreamingEvents.AVATAR_STOP_TALKING, (e) => {
+        console.log("Avatar stopped talking", e);
+      });
+      avatar.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
+        console.log("Stream disconnected");
+        endSession();
+      });
+      avatar.current?.on(StreamingEvents.STREAM_READY, (event) => {
+        console.log(">>>>> Stream ready:", event.detail);
+        setStream(event.detail);
+      });
+      avatar.current?.on(StreamingEvents.USER_START, (event) => {
+        console.log(">>>>> User started talking:", event);
+        setIsUserTalking(true);
+      });
+      avatar.current?.on(StreamingEvents.USER_STOP, (event) => {
+        console.log(">>>>> User stopped talking:", event);
+        setIsUserTalking(false);
+      });
+      try {
+        const res = await avatar.current.createStartAvatar({
+          quality: AvatarQuality.Low,
+          avatarName: avatarId,
+          knowledgeBase: knowledgeBase,
+          voice: {
+            rate: 1.5,
+            emotion: VoiceEmotion.EXCITED,
+          },
+          language: language,
+          disableIdleTimeout: true,
+        });
 
-      // Send intro message if provided
-      if (introMessage && introMessage.trim()) {
-        console.log("Sending intro message:", introMessage);
-        try {
-          await avatar.current.speak({ 
-            text: introMessage, 
-            taskType: TaskType.REPEAT, 
-            taskMode: TaskMode.SYNC 
-          });
-        } catch (e) {
-          console.error("Error sending intro message:", e);
+        setData(res);
+        await avatar.current?.startVoiceChat({
+          useSilencePrompt: false
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        if (introMessage && introMessage.trim()) {
+          console.log("Sending intro message:", introMessage);
+          try {
+            await avatar.current.speak({ 
+              text: introMessage, 
+              taskType: TaskType.REPEAT, 
+              taskMode: TaskMode.SYNC 
+            });
+          } catch (e) {
+            console.error("Error sending intro message:", e);
+          }
         }
+      } catch (error) {
+        console.error("Error starting avatar session:", error);
+        setDebug(error instanceof Error ? error.message : 'An unknown error occurred');
+      } finally {
+        setIsLoadingSession(false);
       }
     } catch (error) {
       console.error("Error starting avatar session:", error);
       setDebug(error instanceof Error ? error.message : 'An unknown error occurred');
-    } finally {
       setIsLoadingSession(false);
     }
   }
@@ -150,7 +224,6 @@ export default function InteractiveAvatar({ defaultAvatarId, knowledgeBase, intr
 
       return;
     }
-    // speak({ text: text, task_type: TaskType.REPEAT })
     await avatar.current.speak({ text: "", taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC }).catch((e) => {
       setDebug(e.message);
     });

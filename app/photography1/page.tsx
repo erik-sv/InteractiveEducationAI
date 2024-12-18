@@ -1,14 +1,16 @@
+/* eslint-disable no-console */
 "use client";
+
+import { useEffect, useState } from "react";
+import { Button, Select, SelectItem } from "@nextui-org/react";
 
 import InteractiveAvatar from "@/components/InteractiveAvatar";
 import { AVATARS } from "@/app/lib/constants";
-import { useEffect, useState } from 'react';
-import { Button, Select, SelectItem } from "@nextui-org/react";
 
 export default function Photography1() {
-  const [knowledgeBase, setKnowledgeBase] = useState<string>('');
+  const [knowledgeBase, setKnowledgeBase] = useState<string>("");
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
-  const [introMessage, setIntroMessage] = useState<string>('');
+  const [introMessage, setIntroMessage] = useState<string>("");
 
   useEffect(() => {
     const loadKnowledgeBase = async () => {
@@ -50,7 +52,7 @@ export default function Photography1() {
   }, []);
 
   const handleDonate = () => {
-    window.open('https://donate.stripe.com/dR6eXK3mXdF70A83cc', '_blank');
+    window.open("https://donate.stripe.com/dR6eXK3mXdF70A83cc", "_blank");
   };
 
   return (
@@ -66,23 +68,23 @@ export default function Photography1() {
             </p>
             <div className="w-full max-w-xs mx-auto">
               <Select
+                className="max-w-xs"
                 label="Select Avatar"
                 selectedKeys={[selectedAvatar]}
                 onChange={(e) => setSelectedAvatar(e.target.value)}
-                className="max-w-xs"
               >
                 {AVATARS.map((avatar) => (
                   <SelectItem
                     key={avatar.avatar_id}
-                    value={avatar.avatar_id}
-                    textValue={avatar.name}
                     startContent={
                       <img
-                        src={`/${avatar.name}_avatar_preview.webp`}
                         alt={`${avatar.name} preview`}
                         className="w-8 h-8 rounded-full object-cover"
+                        src={`/${avatar.name}_avatar_preview.webp`}
                       />
                     }
+                    textValue={avatar.name}
+                    value={avatar.avatar_id}
                   >
                     {avatar.name}
                   </SelectItem>
@@ -91,10 +93,10 @@ export default function Photography1() {
             </div>
           </div>
           <div className="w-full bg-gray-800/50 rounded-xl shadow-lg p-4 sm:p-6">
-            <InteractiveAvatar 
+            <InteractiveAvatar
               defaultAvatarId={selectedAvatar}
-              knowledgeBase={knowledgeBase}
               introMessage={introMessage}
+              knowledgeBase={knowledgeBase}
             />
           </div>
           <div className="flex justify-center pt-4">

@@ -34,9 +34,30 @@ li {
 #zsiq_float,
 #zsiq_chat_wrap,
 .chat-iframe-wrap,
-.zsiq-float {
+.zsiq-float,
+.zsiq_flt_rel,
+.zsiq_custommain,
+.zsiq_floatmain,
+.zsiq-newtheme,
+.zsiq_chatmain,
+.zsiq_minpop,
+.zsiq_min,
+.zsiq_custpop,
+.zsiq_busyico {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* Prevent any Zoho sounds */
+audio[id^="zsiq_"],
+audio[class^="zsiq_"] {
+  display: none !important;
+  volume: 0 !important;
+  muted: true !important;
 }

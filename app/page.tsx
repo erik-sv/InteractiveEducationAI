@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -105,7 +106,7 @@ export default function App() {
               size="lg"
               onClick={handleDonate}
             >
-              Donate Now
+              Donate
             </Button>
           </div>
         </div>
