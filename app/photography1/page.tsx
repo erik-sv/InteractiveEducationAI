@@ -9,7 +9,8 @@ import { AVATARS } from "@/app/lib/constants";
 
 export default function Photography1() {
   const [knowledgeBase, setKnowledgeBase] = useState<string>("");
-  const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
+  // const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
+  const [selectedAvatar] = useState("Ann_Therapist_public");
   const [introMessage, setIntroMessage] = useState<string>("");
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export default function Photography1() {
             <p className="text-xl text-gray-300">
               Master Camera Settings with Interactive Learning
             </p>
-            <div className="w-full max-w-xs mx-auto">
+            {/* <div className="w-full max-w-xs mx-auto">
               <Select
                 className="max-w-xs"
                 label="Select Avatar"
@@ -90,7 +91,7 @@ export default function Photography1() {
                   </SelectItem>
                 ))}
               </Select>
-            </div>
+            </div> */}
           </div>
           <div className="w-full bg-gray-800/50 rounded-xl shadow-lg p-4 sm:p-6">
             <InteractiveAvatar
