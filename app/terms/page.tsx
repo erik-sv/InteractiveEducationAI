@@ -40,11 +40,11 @@ export default function TermsPage() {
             links used on this application.
           </p>
           <p className="text-muted-foreground mt-2">
-            The application is provided "as is" and "as available" without any
-            warranty of any kind. We disclaim all warranties and conditions with
-            regard to this information, including all implied warranties and
-            conditions of merchantability, fitness for a particular purpose,
-            title, and non-infringement.
+            The application is provided &quot;as is&quot; and &quot;as
+            available&quot; without any warranty of any kind. We disclaim all
+            warranties and conditions with regard to this information, including
+            all implied warranties and conditions of merchantability, fitness
+            for a particular purpose, title, and non-infringement.
           </p>
         </div>
 

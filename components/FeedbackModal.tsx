@@ -1,16 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 export default function FeedbackModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="ml-4">
+        <Button className="ml-4" variant="outline">
           Feedback
         </Button>
       </DialogTrigger>
@@ -19,14 +25,15 @@ export default function FeedbackModal() {
           Share Your Feedback
         </DialogTitle>
         <iframe
+          aria-label="Feedback Form"
           src="https://forms.zohopublic.com/advantageintegration1/form/FeedbackForm/formperma/4LotczXhM6wIg2KaHaHYox5hnupb1QiExqASbFYF1Kg?zf_rszfm=1"
           style={{
             border: "none",
             height: "801px",
+            transition: "all 0.5s ease",
             width: "100%",
-            transition: "all 0.5s ease"
           }}
-          aria-label="Feedback Form"
+          title="Feedback Form"
         />
       </DialogContent>
     </Dialog>
