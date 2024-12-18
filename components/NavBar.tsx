@@ -19,6 +19,8 @@ import { usePathname } from "next/navigation";
 import NextLink from "next/link";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
+import FeedbackModal from "@/components/FeedbackModal";
+import { ThemeSwitch } from "@/components/ThemeSwitch";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -82,6 +84,9 @@ export default function NavBar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
+        <div className="flex items-center gap-4">
+          <FeedbackModal />
+        </div>
         <NavbarMenuToggle className="sm:hidden" />
       </NavbarContent>
       <NavbarMenu className="bg-gray-900/95 backdrop-blur-md pt-6">

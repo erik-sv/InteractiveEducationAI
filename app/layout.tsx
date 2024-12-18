@@ -8,6 +8,7 @@ import { Providers } from "./providers";
 import NavBar from "@/components/NavBar";
 import ZohoSalesIQ from "@/components/ZohoSalesIQ";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import Footer from "@/components/Footer";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default function RootLayout({
           <main className="relative flex flex-col min-h-screen w-full">
             {children}
           </main>
+          <Footer />
         </Providers>
         <ZohoSalesIQ />
       </body>

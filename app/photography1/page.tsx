@@ -105,7 +105,7 @@ export default function Photography1() {
               size="lg"
               onClick={handleDonate}
             >
-              Donate Now
+              Donate
             </Button>
           </div>
         </div>
