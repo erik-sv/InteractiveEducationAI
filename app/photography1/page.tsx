@@ -100,7 +100,7 @@ export default function Photography1() {
               knowledgeBase={knowledgeBase}
             />
           </div>
-          <div className="flex justify-center pt-4">
+          {/* <div className="flex justify-center pt-4">
             <Button
               className="btn-primary text-lg px-8 py-6 rounded-lg"
               size="lg"
@@ -108,7 +108,7 @@ export default function Photography1() {
             >
               Donate
             </Button>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>

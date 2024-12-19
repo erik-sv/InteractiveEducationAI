@@ -68,9 +68,22 @@ export default function TermsPage() {
           </p>
         </div>
 
+        <div>
+          <h2 className="text-xl font-semibold mb-3">Liability Disclaimer</h2>
+          <p className="text-muted-foreground">
+            You are solely responsible for any decisions or actions you take
+            based on the information provided on this application. Advantage
+            Integration, LLC shall not be liable for any losses or damages
+            arising from your use of or reliance on such information. In no
+            event shall Advantage Integration, LLC be liable for any direct,
+            indirect, incidental, special, consequential, or punitive damages,
+            resulting from your access to or use of this application.
+          </p>
+        </div>
+
         <div className="pt-4">
           <p className="text-sm text-muted-foreground">
-            Last updated: December 18, 2024
+            Last updated: December 19, 2024
           </p>
         </div>
       </section>
