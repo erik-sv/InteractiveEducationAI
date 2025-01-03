@@ -52,3 +52,159 @@ Please note that Photo Avatars are not compatible with Interactive Avatar and ca
 ### Where can I read more about enterprise-level usage of the Interactive Avatar API?
 
 Please read our Interactive Avatar 101 article for more information on pricing and how to increase your concurrent session limit: https://help.heygen.com/en/articles/9182113-interactive-avatar-101-your-ultimate-guide
+
+## Overview
+
+An advanced educational platform built with Next.js that leverages HeyGen's Interactive Avatar technology to create engaging, interactive learning experiences. This project follows strict development guidelines ensuring consistency, quality, and security while maintaining a mobile-first approach.
+
+## Tech Stack
+
+- **Frontend**: Next.js with TypeScript
+- **State Management**: Redux Toolkit
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/UI
+- **Authentication**: JWT
+- **API Integration**: HeyGen Interactive Avatar API
+
+## Project Structure
+
+```
+/
+├── app/                # Next.js app directory
+├── components/         # React components
+│   ├── ui/            # Shadcn/UI components
+│   └── shared/        # Shared components
+├── lib/               # Third-party library configs
+├── styles/            # Global styles and Tailwind
+├── utils/             # Utility functions
+├── public/            # Static files
+└── docs/             # Documentation
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18.x or later
+- npm 9.x or later
+- HeyGen Enterprise API Token or Trial Token
+- (Optional) OpenAI API Key
+
+### Installation
+
+1. Clone this repository
+```bash
+git clone [repository-url]
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Configure environment variables
+   - Copy `.env.example` to `.env.local`
+   - Add your HeyGen API Token
+   - (Optional) Add OpenAI API Key
+
+4. Start development server
+```bash
+npm run dev
+```
+
+### Available Scripts
+
+```json
+{
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint",
+  "test": "jest",
+  "type-check": "tsc --noEmit"
+}
+```
+
+## HeyGen Interactive Avatar Integration
+
+### Token Types
+
+#### Trial Token
+- Available to all users
+- Limited to 3 concurrent interactive sessions
+- Sessions auto-close after 10 minutes of inactivity
+- Free of charge for testing
+
+#### Enterprise API Token
+- Full access to Interactive Avatar API
+- No concurrent session limits
+- Production-ready usage
+
+### Starting an Interactive Session
+
+1. Ensure your API token is configured in `.env.local`
+2. Start the development server
+3. Click the 'Start' button to initialize Monica (demo avatar)
+4. Use the 'Repeat' input field to interact
+
+### Important Notes
+- Maximum 3 concurrent sessions with Trial Token
+- Close unused sessions to prevent performance issues
+- Monitor session activity to avoid auto-closure
+
+## API Standards
+
+### Response Format
+
+```json
+{
+  "success": boolean,
+  "data": object | array | null,
+  "error": {
+    "code": string,
+    "message": string,
+    "details": object | null
+  } | null
+}
+```
+
+### Status Codes
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 500: Server Error
+
+## Mobile Responsiveness
+
+- Mobile-first design approach
+- Responsive breakpoints:
+  - sm: 640px (Mobile landscape)
+  - md: 768px (Tablets)
+  - lg: 1024px (Laptops)
+  - xl: 1280px (Desktops)
+  - 2xl: 1536px (Large screens)
+
+## Contributing
+
+Please read our [Contributing Guidelines](./CONTRIBUTING.md) before submitting any changes.
+
+## Security
+
+- All inputs are sanitized
+- Secure password hashing implemented
+- Rate limiting on API endpoints
+- Proper handling of sensitive data
+- Regular security audits
+
+## License
+
+This project is licensed under the terms of the license included in the repository.
+
+## Support
+
+For HeyGen API support, visit: [https://app.heygen.com/settings?nav=API]
+
+For project-specific issues, please create an issue in the repository.

@@ -1,22 +1,20 @@
 /* eslint-disable no-console */
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { useEffect, useState } from 'react';
 
-import InteractiveAvatar from "@/components/InteractiveAvatar";
-import { AVATARS } from "@/app/lib/constants";
+import InteractiveAvatar from '@/components/InteractiveAvatar';
 
 export default function App() {
-  const [knowledgeBase, setKnowledgeBase] = useState<string>("");
+  const [knowledgeBase, setKnowledgeBase] = useState<string>('');
   // const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
-  const [selectedAvatar] = useState("Dexter_Lawyer_Sitting_public");
-  const [introMessage, setIntroMessage] = useState<string>("");
+  const [selectedAvatar] = useState('Dexter_Lawyer_Sitting_public');
+  const [introMessage, setIntroMessage] = useState<string>('');
 
   useEffect(() => {
     const loadKnowledgeBase = async () => {
       try {
-        const response = await fetch("/api/get-knowledge-base");
+        const response = await fetch('/api/get-knowledge-base');
         const data = await response.json();
 
         if (data.knowledgeBase) {
@@ -24,28 +22,23 @@ export default function App() {
 
           // Extract intro message from XML structure
           const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(data.knowledgeBase, "text/xml");
-          const introMessageElement = xmlDoc.querySelector("intro_message");
+          const xmlDoc = parser.parseFromString(data.knowledgeBase, 'text/xml');
+          const introMessageElement = xmlDoc.querySelector('intro_message');
 
           if (introMessageElement) {
-            setIntroMessage(introMessageElement.textContent || "");
-            if (process.env.NODE_ENV === "development") {
-              console.log(
-                "Extracted intro message:",
-                introMessageElement.textContent,
-              );
+            setIntroMessage(introMessageElement.textContent || '');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Extracted intro message:', introMessageElement.textContent);
             }
           } else {
-            if (process.env.NODE_ENV === "development") {
-              console.error("No intro_message tag found in XML.");
+            if (process.env.NODE_ENV === 'development') {
+              console.error('No intro_message tag found in XML.');
             }
-            setIntroMessage(
-              "Welcome! Please wait while we load your personalized experience.",
-            );
+            setIntroMessage('Welcome! Please wait while we load your personalized experience.');
           }
         }
       } catch (error) {
-        console.error("Error loading knowledge base:", error);
+        console.error('Error loading knowledge base:', error);
       }
     };
 
@@ -54,7 +47,7 @@ export default function App() {
 
   const handleDonate = () => {
     // Add donation link or modal here
-    window.open("https://donate.stripe.com/dR6eXK3mXdF70A83cc", "_blank");
+    window.open('https://donate.stripe.com/dR6eXK3mXdF70A83cc', '_blank');
   };
 
   return (
@@ -62,9 +55,7 @@ export default function App() {
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-[900px] w-full mx-auto py-8 space-y-8">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl sm:text-5xl font-bold gradient-text">
-              AI Education Platform
-            </h1>
+            <h1 className="text-4xl sm:text-5xl font-bold gradient-text">AI Education Platform</h1>
             <p className="text-xl text-gray-300">
               Empowering Teachers & Students with Personalized Tutoring
             </p>

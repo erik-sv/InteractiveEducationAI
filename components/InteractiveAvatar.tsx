@@ -1,7 +1,18 @@
 /* Relative Path: /components/InteractiveAvatar.tsx */
 /* eslint-disable no-console */
+'use client';
 
-import type { StartAvatarResponse } from "@heygen/streaming-avatar";
+/**
+ * InteractiveAvatar.tsx
+ *
+ * Key changes to ensure:
+ *   1) We add partial text to a buffer *each time* we get a partial event.
+ *   2) We also keep merging that buffer into a single "partial" line in the transcription array
+ *      so the transcription file updates in real time (with partial text).
+ *   3) Once the avatar stops talking, we finalize that line with the entire text from the buffer.
+ */
+
+import type { StartAvatarResponse } from '@heygen/streaming-avatar';
 
 import StreamingAvatar, {
   AvatarQuality,
@@ -9,21 +20,39 @@ import StreamingAvatar, {
   TaskMode,
   TaskType,
   VoiceEmotion,
-} from "@heygen/streaming-avatar";
-import {
-  Button,
-  Card,
-  CardBody,
-  Select,
-  SelectItem,
-  Spinner,
-} from "@nextui-org/react";
-import { useEffect, useRef, useState, useCallback } from "react";
-import Image from "next/image";
-import { BsArrowsFullscreen } from "react-icons/bs";
+} from '@heygen/streaming-avatar';
+import { Button, Card, CardBody, Select, SelectItem, Spinner } from '@nextui-org/react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import Image from 'next/image';
+import { BsArrowsFullscreen } from 'react-icons/bs';
 
-import { AVATARS, STT_LANGUAGE_LIST } from "@/app/lib/constants";
-import { getPSTTimestamp } from "@/utils/dateUtils";
+import { AVATARS, STT_LANGUAGE_LIST } from '@/app/lib/constants';
+import { getPSTTimestamp } from '@/utils/dateUtils';
+
+function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+  let timer: NodeJS.Timeout;
+
+  return (...args: Parameters<T>) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+/**
+ * Build a "complex" date-based filename
+ * e.g. 2025_01_03_13_07_18_2e177416-b139-4e63-ae75-a51abd1eac46.txt
+ */
+function buildDateTimeFilename(streamId: string) {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const sec = String(now.getSeconds()).padStart(2, '0');
+
+  return `${yyyy}_${mm}_${dd}_${hh}_${min}_${sec}_${streamId}.txt`;
+}
 
 interface InteractiveAvatarProps {
   defaultAvatarId?: string;
@@ -33,9 +62,11 @@ interface InteractiveAvatarProps {
 
 interface TranscriptionEntry {
   timestamp: string;
-  type: "avatar" | "user" | "system";
-  content: string;
+  type: 'avatar' | 'user' | 'system';
+  content: string; // e.g. "(partial)" or "(final)" or "Started speaking"
   transcription?: string;
+  turnId?: string; // unique ID per avatar speaking turn
+  isPartial?: boolean; // helps differentiate partial vs final lines
 }
 
 export default function InteractiveAvatar({
@@ -45,32 +76,46 @@ export default function InteractiveAvatar({
 }: InteractiveAvatarProps) {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [isLoadingRepeat, setIsLoadingRepeat] = useState(false);
+
+  // For the avatar's MediaStream
   const [stream, setStream] = useState<MediaStream>();
   const [streamId, setStreamId] = useState<string>();
   const streamIdRef = useRef<string | undefined>(undefined);
-  const [debug, setDebug] = useState<string>();
-  const [avatarId, setAvatarId] = useState<string>(defaultAvatarId || "");
+
+  const [avatarId, setAvatarId] = useState<string>(defaultAvatarId || '');
   const [transcription, setTranscription] = useState<TranscriptionEntry[]>([]);
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const inactivityTimeout = useRef<NodeJS.Timeout>();
 
+  // The partial buffer for the current avatar speaking turn
+  const avatarPartialBufferRef = useRef<string[]>([]);
+
+  // For the user mic
   const userMediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const avatarMediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const userAudioChunksRef = useRef<Blob[]>([]);
-  const avatarAudioChunksRef = useRef<Blob[]>([]);
+  const userMediaRef = useRef<MediaStream | null>(null);
+
+  // The streaming avatar instance
   const mediaStream = useRef<HTMLVideoElement>(null);
   const avatar = useRef<StreamingAvatar | null>(null);
 
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const destinationRef = useRef<MediaStreamAudioDestinationNode | null>(null);
+  // Session state
+  const [isSessionActive, setIsSessionActive] = useState(false);
+  const isSessionActiveRef = useRef(false);
 
-  // Store user media stream separately for user recording
-  const userMediaRef = useRef<MediaStream | null>(null);
+  // UI states
+  const [language, setLanguage] = useState<string>('en');
+  const [debug, setDebug] = useState<string>();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const [lastMouseMove, setLastMouseMove] = useState(Date.now());
+  const hideControlsTimeout = useRef<NodeJS.Timeout>();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [data, setData] = useState<StartAvatarResponse>();
+  const [isUserTalking, setIsUserTalking] = useState(false);
+  const [isMicMuted, setIsMicMuted] = useState(false);
 
-  const handleActivity = useCallback(() => {
-    console.log("Speech activity detected, resetting timer");
-    setLastActivity(Date.now());
-  }, []);
+  // We'll store the final filename after receiving the stream ID
+  const sessionFilenameRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (defaultAvatarId) {
@@ -78,315 +123,353 @@ export default function InteractiveAvatar({
     }
   }, [defaultAvatarId]);
 
+  // Inactivity => end session
   useEffect(() => {
-    if (lastActivity) {
-      if (inactivityTimeout.current) {
-        clearTimeout(inactivityTimeout.current);
-      }
+    if (!lastActivity) return;
+    if (inactivityTimeout.current) clearTimeout(inactivityTimeout.current);
 
-      inactivityTimeout.current = setTimeout(
-        () => {
-          console.log("Session ended due to inactivity");
-          endSession();
-        },
-        3 * 60 * 1000,
-      );
-    }
+    inactivityTimeout.current = setTimeout(
+      () => {
+        console.log('Session ended due to inactivity');
+        endSession();
+      },
+      3 * 60 * 1000
+    );
 
     return () => {
-      if (inactivityTimeout.current) {
-        clearTimeout(inactivityTimeout.current);
-      }
+      if (inactivityTimeout.current) clearTimeout(inactivityTimeout.current);
     };
   }, [lastActivity]);
 
-  async function saveTranscription() {
-    if (!streamId) return;
+  const handleActivity = useCallback(() => {
+    console.log('Speech activity detected, resetting timer');
+    setLastActivity(Date.now());
+  }, []);
 
-    try {
-      const response = await fetch("/api/save-transcription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          streamId,
-          transcription,
-          timestamp: new Date().toISOString(),
-        }),
-      });
+  // Debounced saving to server
+  const debouncedSaveTranscription = useRef(
+    debounce(async (arr: TranscriptionEntry[]) => {
+      if (!isSessionActiveRef.current || !streamIdRef.current) return;
+      const fileName = sessionFilenameRef.current;
 
-      if (!response.ok) {
-        throw new Error("Failed to save transcription");
+      if (!fileName) return;
+
+      console.log('[DEBUG] About to save transcription. Current array:', arr);
+
+      try {
+        const response = await fetch('/api/save-transcription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            streamId: streamIdRef.current,
+            transcription: arr,
+            filename: fileName,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to save transcription:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error saving transcription:', error);
       }
-    } catch (error) {
-      console.error("Error saving transcription:", error);
-    }
+    }, 200)
+  ).current;
+
+  // Helper to update transcription array & do an immediate short-debounce save
+  const setAndSaveTranscription = useCallback(
+    (updater: (prev: TranscriptionEntry[]) => TranscriptionEntry[]) => {
+      setTranscription(prev => {
+        const updated = updater(prev);
+
+        debouncedSaveTranscription(updated);
+
+        return updated;
+      });
+    },
+    [debouncedSaveTranscription]
+  );
+
+  // MIME for user mic
+  function getSupportedMimeType() {
+    if (typeof window === 'undefined' || !window.MediaRecorder) return '';
+    const possibleTypes = ['audio/webm; codecs=opus', 'audio/webm', 'audio/mp4'];
+
+    return possibleTypes.find(type => MediaRecorder.isTypeSupported(type)) || '';
   }
+  const mediaRecorderMimeType = getSupportedMimeType();
 
-  const handleTranscription = async (
-    audioBlob: Blob,
-    type: "user" | "avatar",
-  ) => {
-    try {
-      const currentStreamId = streamIdRef.current || streamId;
-
-      if (!currentStreamId) {
-        console.error("No streamId available for transcription");
+  // user => whisper
+  const handleUserTranscription = useCallback(
+    async (audioBlob: Blob) => {
+      if (!isSessionActiveRef.current || !streamIdRef.current) {
+        console.warn('Skipping user transcription; session not active or no streamId');
 
         return;
       }
-
       const formData = new FormData();
 
-      formData.append(
-        "audio",
-        audioBlob,
-        `audio.${audioBlob.type.split("/")[1]}`,
-      );
-      formData.append("type", type);
-      formData.append("streamId", currentStreamId);
+      formData.append('audio', audioBlob, `audio.${audioBlob.type.split('/')[1] || 'webm'}`);
+      formData.append('type', 'user');
+      formData.append('streamId', streamIdRef.current);
 
-      fetch("/api/transcribe-audio", {
-        method: "POST",
-        body: formData,
-      })
-        .then(async (response) => {
-          if (!response.ok) {
-            console.error("Transcription API error:", await response.text());
-
-            return;
-          }
-          const { transcription: text } = await response.json();
-
-          console.log("Transcription successful:", { text });
-
-          setTranscription((prev) => {
-            const lastEntry = [...prev]
-              .reverse()
-              .find((entry) => entry.type === type && !entry.transcription);
-
-            if (lastEntry) {
-              const updated = [...prev];
-              const index = updated.lastIndexOf(lastEntry);
-
-              updated[index] = { ...updated[index], transcription: text };
-
-              return updated;
-            }
-
-            return prev;
-          });
-
-          // Save after updating transcription
-          await saveTranscription();
-        })
-        .catch((error) => {
-          console.error("Error in transcription:", error);
+      try {
+        const response = await fetch('/api/transcribe-audio', {
+          method: 'POST',
+          body: formData,
         });
-    } catch (error) {
-      console.error("Error preparing transcription:", error);
-    }
-  };
 
-  const setupMediaRecorder = (stream: MediaStream, type: "user" | "avatar") => {
-    const recorder = new MediaRecorder(stream, {
-      mimeType: "audio/webm",
-      audioBitsPerSecond: 128000,
-    });
-    const chunksRef =
-      type === "user" ? userAudioChunksRef : avatarAudioChunksRef;
-
-    chunksRef.current = [];
-
-    recorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        console.log(`Received ${type} audio chunk of size: ${event.data.size}`);
-        chunksRef.current.push(event.data);
-      }
-    };
-
-    recorder.onstop = async () => {
-      const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
-
-      console.log(`Processing ${type} audio of size: ${audioBlob.size}`);
-      await handleTranscription(audioBlob, type);
-
-      // If this was the user recorder, restart continuous user recording
-      if (type === "user") {
-        startContinuousUserRecording();
-      }
-    };
-
-    return recorder;
-  };
-
-  // Start continuous user recording
-  const startContinuousUserRecording = useCallback(() => {
-    if (!userMediaRef.current) return;
-    if (userMediaRecorderRef.current?.state === "recording") {
-      userMediaRecorderRef.current.stop();
-    }
-    userAudioChunksRef.current = [];
-    userMediaRecorderRef.current = setupMediaRecorder(
-      userMediaRef.current,
-      "user",
-    );
-    // Continuous recording without timeslice
-    userMediaRecorderRef.current.start();
-    console.log("Started continuous user recording");
-  }, []);
-
-  const stopRecording = useCallback((type: "user" | "avatar") => {
-    const recorderRef =
-      type === "user" ? userMediaRecorderRef : avatarMediaRecorderRef;
-
-    if (recorderRef.current?.state === "recording") {
-      console.log(`Stopping ${type} recording`);
-      recorderRef.current.stop();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (avatar.current) {
-      const handleUserSpeech = () => {
-        console.log(">>>>> User started talking");
-        // Do NOT start recording here; we are continuously recording user audio
-        setTranscription((prev) => [
-          ...prev,
-          {
-            timestamp: getPSTTimestamp(),
-            type: "user",
-            content: "Started speaking",
-          },
-        ]);
-        handleActivity();
-      };
-
-      const handleUserStop = () => {
-        console.log(">>>>> User stopped talking");
-        // Stop the continuous recorder to finalize the transcription
-        if (userMediaRecorderRef.current?.state === "recording") {
-          userMediaRecorderRef.current.stop();
-        }
-        setTranscription((prev) => [
-          ...prev,
-          {
-            timestamp: getPSTTimestamp(),
-            type: "user",
-            content: "Stopped speaking",
-          },
-        ]);
-      };
-
-      const handleAvatarSpeech = () => {
-        console.log("Avatar started talking");
-        if (!destinationRef.current?.stream) {
-          console.error("Avatar audio stream not ready");
+        if (!response.ok) {
+          console.error('Transcription API error:', await response.text());
 
           return;
         }
-        // For avatar, we start fresh recording each utterance
-        if (avatarMediaRecorderRef.current?.state === "recording") {
-          avatarMediaRecorderRef.current.stop();
-        }
-        avatarMediaRecorderRef.current = setupMediaRecorder(
-          destinationRef.current.stream,
-          "avatar",
-        );
-        avatarMediaRecorderRef.current.start();
-        console.log(`Started recording for avatar`);
+        const { transcription: text } = await response.json();
 
-        setTranscription((prev) => [
-          ...prev,
-          {
-            timestamp: getPSTTimestamp(),
-            type: "avatar",
-            content: "Started speaking",
-          },
-        ]);
-        handleActivity();
-      };
+        console.log('Transcription successful (User):', text);
 
-      const handleAvatarStop = () => {
-        console.log("Avatar stopped talking");
-        stopRecording("avatar");
-        setTranscription((prev) => [
-          ...prev,
-          {
-            timestamp: getPSTTimestamp(),
-            type: "avatar",
-            content: "Stopped speaking",
-          },
-        ]);
-      };
+        // Insert the recognized text into the last user line that has no transcription
+        setAndSaveTranscription(prev => {
+          const lastUserIndex = [...prev]
+            .reverse()
+            .findIndex(e => e.type === 'user' && !e.transcription);
 
-      avatar.current.on(StreamingEvents.USER_START, handleUserSpeech);
-      avatar.current.on(StreamingEvents.USER_STOP, handleUserStop);
-      avatar.current.on(
-        StreamingEvents.AVATAR_START_TALKING,
-        handleAvatarSpeech,
-      );
-      avatar.current.on(StreamingEvents.AVATAR_STOP_TALKING, handleAvatarStop);
+          if (lastUserIndex < 0) return prev;
 
-      return () => {
-        if (avatar.current) {
-          avatar.current.off(StreamingEvents.USER_START, handleUserSpeech);
-          avatar.current.off(StreamingEvents.USER_STOP, handleUserStop);
-          avatar.current.off(
-            StreamingEvents.AVATAR_START_TALKING,
-            handleAvatarSpeech,
-          );
-          avatar.current.off(
-            StreamingEvents.AVATAR_STOP_TALKING,
-            handleAvatarStop,
-          );
-        }
-      };
+          const actualIndex = prev.length - 1 - lastUserIndex;
+          const updated = [...prev];
+
+          updated[actualIndex] = { ...updated[actualIndex], transcription: text };
+
+          return updated;
+        });
+      } catch (err) {
+        console.error('Error in user transcription:', err);
+      }
+    },
+    [setAndSaveTranscription]
+  );
+
+  // Setup user mic recorder
+  const startContinuousUserRecording = useCallback(() => {
+    if (!isSessionActiveRef.current || !userMediaRef.current) {
+      console.warn('Skipping user mic record; session inactive or no user media');
+
+      return;
     }
-  }, [avatar.current, handleActivity, stopRecording]);
 
-  const [knowledgeId, setKnowledgeId] = useState<string>(knowledgeBase || "");
-  const [language, setLanguage] = useState<string>("en");
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-  const [lastMouseMove, setLastMouseMove] = useState(Date.now());
-  const hideControlsTimeout = useRef<NodeJS.Timeout>();
-  const containerRef = useRef<HTMLDivElement>(null);
+    if (userMediaRecorderRef.current?.state === 'recording') {
+      userMediaRecorderRef.current.stop();
+    }
 
-  const [data, setData] = useState<StartAvatarResponse>();
-  const [isUserTalking, setIsUserTalking] = useState(false);
-  const [isMicMuted, setIsMicMuted] = useState(false);
+    const recorder = new MediaRecorder(userMediaRef.current, {
+      mimeType: mediaRecorderMimeType,
+    });
+
+    let audioChunks: Blob[] = [];
+
+    recorder.ondataavailable = event => {
+      audioChunks.push(event.data);
+    };
+
+    recorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: mediaRecorderMimeType });
+
+      audioChunks = [];
+      console.log(`Processing user audio of size: ${audioBlob.size}`);
+      await handleUserTranscription(audioBlob);
+
+      if (isSessionActiveRef.current) {
+        startContinuousUserRecording(); // re-start
+      }
+    };
+
+    userMediaRecorderRef.current = recorder;
+    recorder.start();
+  }, [handleUserTranscription, mediaRecorderMimeType]);
+
+  const stopRecording = useCallback((type: 'user') => {
+    if (type === 'user') {
+      if (userMediaRecorderRef.current?.state === 'recording') {
+        console.log('Stopping user recording');
+        try {
+          userMediaRecorderRef.current.stop();
+        } catch (err) {
+          console.error('Error stopping user recorder:', err);
+        }
+      }
+    }
+  }, []);
+
+  // -------------- AVATAR PARTIAL / FINAL --------------
+
+  // Each time we get "partial" text from HeyGen, append to partial buffer & update the single partial line
+  const handleAvatarPartialMessage = useCallback(
+    (text: string) => {
+      if (!isSessionActiveRef.current) return;
+
+      // We simply store *all partial strings* in a buffer
+      avatarPartialBufferRef.current.push(text);
+
+      // Merge them so far
+      const mergedSoFar = avatarPartialBufferRef.current.join('');
+
+      console.log('[Avatar partial transcript => buffer merge]:', JSON.stringify(mergedSoFar));
+
+      // Find our single partial line
+      setAndSaveTranscription(prev => {
+        const partialIdx = prev.findIndex(e => e.type === 'avatar' && e.isPartial);
+
+        if (partialIdx < 0) return prev;
+
+        const updated = [...prev];
+        const old = updated[partialIdx];
+
+        updated[partialIdx] = { ...old, transcription: mergedSoFar };
+
+        return updated;
+      });
+    },
+    [setAndSaveTranscription]
+  );
+
+  const handleAvatarStopTalking = useCallback(() => {
+    if (!isSessionActiveRef.current) return;
+
+    // The entire final text is the merged partial from the buffer
+    const finalText = avatarPartialBufferRef.current.join('');
+
+    avatarPartialBufferRef.current = []; // clear
+
+    console.log('Avatar stopped => final text is:', JSON.stringify(finalText));
+
+    // finalize partial => final
+    setAndSaveTranscription(prev => {
+      const partialIdx = prev.findIndex(e => e.type === 'avatar' && e.isPartial);
+
+      if (partialIdx < 0) return prev;
+      const updated = [...prev];
+      const old = updated[partialIdx];
+
+      updated[partialIdx] = {
+        ...old,
+        content: '(final)',
+        isPartial: false,
+        transcription: finalText,
+      };
+
+      return updated;
+    });
+  }, [setAndSaveTranscription]);
+
+  // We'll create a partial line once we see AVATAR_START_TALKING
+  const handleAvatarStartTalking = useCallback(() => {
+    if (!isSessionActiveRef.current) return;
+
+    console.log('Avatar started talking => create new partial line');
+    // Insert a single partial line
+    setAndSaveTranscription(prev => [
+      ...prev,
+      {
+        timestamp: getPSTTimestamp(),
+        type: 'avatar',
+        content: '(partial)',
+        transcription: '',
+        isPartial: true,
+      },
+    ]);
+  }, [setAndSaveTranscription]);
+
+  // -------------- SUBSCRIBE TO HEYGEN EVENTS --------------
+  useEffect(() => {
+    if (!avatar.current) return;
+
+    const onUserStart = () => {
+      if (!isSessionActiveRef.current) return;
+      console.log('>>>>> User started talking');
+      setAndSaveTranscription(prev => [
+        ...prev,
+        { timestamp: getPSTTimestamp(), type: 'user', content: 'Started speaking' },
+      ]);
+      handleActivity();
+    };
+
+    const onUserStop = () => {
+      if (!isSessionActiveRef.current) return;
+      console.log('>>>>> User stopped talking');
+      stopRecording('user');
+      setAndSaveTranscription(prev => [
+        ...prev,
+        { timestamp: getPSTTimestamp(), type: 'user', content: 'Stopped speaking' },
+      ]);
+    };
+
+    avatar.current.on(StreamingEvents.USER_START, onUserStart);
+    avatar.current.on(StreamingEvents.USER_STOP, onUserStop);
+
+    const onAvatarStart = () => {
+      handleActivity();
+      handleAvatarStartTalking();
+    };
+
+    const onAvatarPartialEvent = (evt: CustomEvent) => {
+      handleActivity();
+      const partial = evt.detail?.message || '';
+
+      handleAvatarPartialMessage(partial);
+    };
+
+    const onAvatarStopEvent = () => {
+      handleActivity();
+      handleAvatarStopTalking();
+    };
+
+    avatar.current.on(StreamingEvents.AVATAR_START_TALKING, onAvatarStart);
+    avatar.current.on(StreamingEvents.AVATAR_TALKING_MESSAGE, onAvatarPartialEvent);
+    avatar.current.on(StreamingEvents.AVATAR_STOP_TALKING, onAvatarStopEvent);
+
+    return () => {
+      avatar.current?.off(StreamingEvents.USER_START, onUserStart);
+      avatar.current?.off(StreamingEvents.USER_STOP, onUserStop);
+
+      avatar.current?.off(StreamingEvents.AVATAR_START_TALKING, onAvatarStart);
+      avatar.current?.off(StreamingEvents.AVATAR_TALKING_MESSAGE, onAvatarPartialEvent);
+      avatar.current?.off(StreamingEvents.AVATAR_STOP_TALKING, onAvatarStopEvent);
+    };
+  }, [
+    avatar.current,
+    handleActivity,
+    handleAvatarStartTalking,
+    handleAvatarPartialMessage,
+    handleAvatarStopTalking,
+    setAndSaveTranscription,
+    stopRecording,
+  ]);
+
+  // -------------- START / END SESSION --------------
 
   async function fetchAccessToken() {
     try {
-      const response = await fetch("/api/get-access-token", {
-        method: "POST",
-      });
+      const response = await fetch('/api/get-access-token', { method: 'POST' });
       const token = await response.text();
 
-      console.log("Access Token:", token);
+      console.log('Access Token:', token);
 
       return token;
     } catch (error) {
-      console.error("Error fetching access token:", error);
+      console.error('Error fetching access token:', error);
     }
 
-    return "";
+    return '';
   }
 
   async function startSession() {
     setIsLoadingSession(true);
     try {
-      const newToken = await fetchAccessToken();
-      const audioContext = new AudioContext({
-        sampleRate: 48000,
-        latencyHint: "interactive",
-      });
+      setIsSessionActive(true);
+      isSessionActiveRef.current = true;
 
-      await audioContext.audioWorklet.addModule("/audioWorklet.js");
-
-      // Get user audio for user's speech
       const userMedia = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -397,179 +480,142 @@ export default function InteractiveAvatar({
       });
 
       userMediaRef.current = userMedia;
-
-      // Start continuous user recording immediately
       startContinuousUserRecording();
 
-      avatar.current = new StreamingAvatar({ token: newToken });
+      const token = await fetchAccessToken();
 
-      avatar.current.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
-        console.log("Avatar started talking", e);
-      });
-      avatar.current.on(StreamingEvents.AVATAR_STOP_TALKING, (e) => {
-        console.log("Avatar stopped talking", e);
-      });
+      avatar.current = new StreamingAvatar({ token });
+
       avatar.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
-        console.log("Stream disconnected");
-        // If stream disconnects unexpectedly, stop any ongoing recordings
-        stopRecording("avatar");
-        // Stopping user continuous recorder
-        if (userMediaRecorderRef.current?.state === "recording") {
-          userMediaRecorderRef.current.stop();
-        }
+        console.log('Stream disconnected');
+        stopRecording('user');
         endSession();
       });
 
-      avatar.current.on(StreamingEvents.STREAM_READY, (event) => {
-        console.log(">>>>> Stream ready:", event.detail);
-        setStream(event.detail);
-        // Use the MediaStream's id directly as streamId
-        streamIdRef.current = event.detail.id;
-        setStreamId(event.detail.id);
+      avatar.current.on(StreamingEvents.STREAM_READY, evt => {
+        if (!isSessionActiveRef.current) return;
+        console.log('>>>>> Stream ready:', evt.detail);
 
+        setStream(evt.detail);
+        streamIdRef.current = evt.detail.id;
+        setStreamId(evt.detail.id);
+
+        // Build a single date-based file name for entire session
+        if (!sessionFilenameRef.current) {
+          const name = buildDateTimeFilename(evt.detail.id);
+
+          sessionFilenameRef.current = name;
+          console.log('Session file name set to:', name);
+        }
+
+        if (mediaStream.current) {
+          mediaStream.current.srcObject = evt.detail;
+          mediaStream.current.onloadedmetadata = () => {
+            mediaStream.current?.play().catch(err => console.error(err));
+          };
+        }
+        console.log('Avatar audio stream is ready.');
+      });
+
+      const sessionInfo = await avatar.current.createStartAvatar({
+        quality: AvatarQuality.Low,
+        avatarName: avatarId,
+        knowledgeBase,
+        voice: {
+          rate: 1.5,
+          emotion: VoiceEmotion.EXCITED,
+        },
+        language,
+        disableIdleTimeout: true,
+      });
+
+      setData(sessionInfo);
+
+      await avatar.current.startVoiceChat({ useSilencePrompt: false });
+      await new Promise(r => setTimeout(r, 500));
+
+      if (introMessage && introMessage.trim()) {
+        console.log('Sending intro message:', introMessage);
         try {
-          audioContextRef.current = new AudioContext();
-          destinationRef.current =
-            audioContextRef.current.createMediaStreamDestination();
-
-          const avatarStreamSource =
-            audioContextRef.current.createMediaStreamSource(event.detail);
-
-          // Only connect avatar audio to destination for recording
-          avatarStreamSource.connect(destinationRef.current);
-
-          if (mediaStream.current) {
-            mediaStream.current.srcObject = event.detail;
-            mediaStream.current.onloadedmetadata = () => {
-              mediaStream.current!.play();
-            };
-          }
-
-          console.log(
-            "Avatar audio context initialized from STREAM_READY MediaStream",
-          );
-        } catch (error) {
-          console.error(
-            "Error initializing avatar audio from STREAM_READY:",
-            error,
-          );
+          await avatar.current.speak({
+            text: introMessage,
+            taskType: TaskType.REPEAT,
+            taskMode: TaskMode.SYNC,
+          });
+        } catch (e) {
+          console.error('Error sending intro message:', e);
         }
-      });
-
-      avatar.current.on(StreamingEvents.USER_START, (event) => {
-        console.log(">>>>> User started talking:", event);
-        setIsUserTalking(true);
-      });
-      avatar.current.on(StreamingEvents.USER_STOP, (event) => {
-        console.log(">>>>> User stopped talking:", event);
-        setIsUserTalking(false);
-      });
-
-      try {
-        const res = await avatar.current.createStartAvatar({
-          quality: AvatarQuality.Low,
-          avatarName: avatarId,
-          knowledgeBase: knowledgeBase,
-          voice: {
-            rate: 1.5,
-            emotion: VoiceEmotion.EXCITED,
-          },
-          language: language,
-          disableIdleTimeout: true,
-        });
-
-        setData(res);
-        await avatar.current.startVoiceChat({ useSilencePrompt: false });
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        if (introMessage && introMessage.trim()) {
-          console.log("Sending intro message:", introMessage);
-          try {
-            await avatar.current.speak({
-              text: introMessage,
-              taskType: TaskType.REPEAT,
-              taskMode: TaskMode.SYNC,
-            });
-          } catch (e) {
-            console.error("Error sending intro message:", e);
-          }
-        }
-      } catch (error) {
-        console.error("Error starting avatar session:", error);
-        setDebug(
-          error instanceof Error ? error.message : "An unknown error occurred",
-        );
-      } finally {
-        setIsLoadingSession(false);
       }
     } catch (error) {
-      console.error("Error starting avatar session:", error);
-      setDebug(
-        error instanceof Error ? error.message : "An unknown error occurred",
-      );
+      console.error('Error starting session:', error);
+      setDebug(error instanceof Error ? error.message : 'Unknown error');
+      setIsSessionActive(false);
+      isSessionActiveRef.current = false;
+    } finally {
       setIsLoadingSession(false);
     }
+  }
+
+  async function handleInterrupt() {
+    if (!avatar.current) {
+      setDebug('Avatar not initialized');
+
+      return;
+    }
+    await avatar.current.interrupt().catch(e => setDebug(e.message));
   }
 
   async function handleSpeak() {
     setIsLoadingRepeat(true);
     if (!avatar.current) {
-      setDebug("Avatar API not initialized");
+      setDebug('Avatar not initialized');
 
       return;
     }
     await avatar.current
-      .speak({ text: "", taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC })
-      .catch((e) => {
-        setDebug(e.message);
-      });
+      .speak({ text: '', taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC })
+      .catch(e => setDebug(e.message));
     setIsLoadingRepeat(false);
   }
 
-  async function handleInterrupt() {
-    if (!avatar.current) {
-      setDebug("Avatar API not initialized");
+  async function endSession() {
+    if (!isSessionActiveRef.current) {
+      console.log('Session already inactive; ignoring endSession.');
 
       return;
     }
-    await avatar.current.interrupt().catch((e) => {
-      setDebug(e.message);
-    });
-  }
+    console.log('Ending session...');
+    setIsSessionActive(false);
+    isSessionActiveRef.current = false;
 
-  async function endSession() {
-    // Stop any ongoing recordings before ending session
-    stopRecording("avatar");
-    if (userMediaRecorderRef.current?.state === "recording") {
-      userMediaRecorderRef.current.stop();
-    }
-
+    stopRecording('user');
     await avatar.current?.stopAvatar();
-    await saveTranscription();
+
+    // final save
+    debouncedSaveTranscription([...transcription]);
+
     setStream(undefined);
     setStreamId(undefined);
     setData(undefined);
     setTranscription([]);
   }
 
+  // UI
   const handleToggleMic = async () => {
-    if (avatar.current) {
-      if (!isMicMuted) {
-        await avatar.current.closeVoiceChat();
-      } else {
-        await avatar.current.startVoiceChat();
-      }
-      setIsMicMuted(!isMicMuted);
+    if (!avatar.current) return;
+    if (!isMicMuted) {
+      await avatar.current.closeVoiceChat();
+    } else {
+      await avatar.current.startVoiceChat();
     }
+    setIsMicMuted(!isMicMuted);
   };
 
   const handleMouseMove = () => {
     setShowControls(true);
     setLastMouseMove(Date.now());
-    if (hideControlsTimeout.current) {
-      clearTimeout(hideControlsTimeout.current);
-    }
+    if (hideControlsTimeout.current) clearTimeout(hideControlsTimeout.current);
+
     hideControlsTimeout.current = setTimeout(() => {
       if (Date.now() - lastMouseMove > 2000) {
         setShowControls(false);
@@ -587,35 +633,34 @@ export default function InteractiveAvatar({
     }
   };
 
+  // track fullscreen
   useEffect(() => {
-    const handleFullscreenChange = () => {
+    const onFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
 
     return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
     };
   }, []);
 
+  // cleanup on unmount
   useEffect(() => {
     return () => {
-      // On unmount, end the session properly
-      stopRecording("avatar");
-      if (userMediaRecorderRef.current?.state === "recording") {
-        userMediaRecorderRef.current.stop();
-      }
       endSession();
     };
-  }, [stopRecording]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  // attach final stream
   useEffect(() => {
     if (stream && mediaStream.current) {
       mediaStream.current.srcObject = stream;
       mediaStream.current.onloadedmetadata = () => {
-        mediaStream.current!.play();
-        setDebug("Playing");
+        mediaStream.current?.play().catch(err => console.error(err));
+        setDebug('Playing');
       };
     }
   }, [stream]);
@@ -627,7 +672,7 @@ export default function InteractiveAvatar({
           {stream ? (
             <div
               ref={containerRef}
-              className={`relative w-full ${isFullscreen ? "fixed inset-0 z-50 bg-black" : ""}`}
+              className={`relative w-full ${isFullscreen ? 'fixed inset-0 z-50 bg-black' : ''}`}
               onMouseMove={handleMouseMove}
             >
               <div className="relative w-full aspect-video rounded-lg overflow-hidden">
@@ -641,15 +686,15 @@ export default function InteractiveAvatar({
                 </video>
                 <div
                   className={`absolute transition-opacity duration-300 ${
-                    showControls ? "opacity-100" : "opacity-0"
+                    showControls ? 'opacity-100' : 'opacity-0'
                   }`}
                   style={{
-                    bottom: "10px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
+                    bottom: '10px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                     zIndex: 10,
-                    width: "95%",
-                    maxWidth: "600px",
+                    width: '95%',
+                    maxWidth: '600px',
                   }}
                 >
                   <div className="flex justify-center gap-2 p-2 sm:p-3 bg-black/50 rounded-lg backdrop-blur-sm">
@@ -659,7 +704,7 @@ export default function InteractiveAvatar({
                       variant="shadow"
                       onPress={handleToggleMic}
                     >
-                      {isMicMuted ? "Unmute" : "Mute"}
+                      {isMicMuted ? 'Unmute' : 'Mute'}
                     </Button>
                     <Button
                       className="btn-solid rounded-lg min-w-0 px-2 sm:px-4"
@@ -697,10 +742,12 @@ export default function InteractiveAvatar({
                   <Image
                     fill
                     priority
-                    alt={`${AVATARS.find((a) => a.avatar_id === avatarId)?.name} avatar preview`}
+                    alt={`${AVATARS.find(a => a.avatar_id === avatarId)?.name} preview`}
                     className="object-contain"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    src={`/${AVATARS.find((a) => a.avatar_id === avatarId)?.name}_avatar_preview.webp`}
+                    src={`/${
+                      AVATARS.find(a => a.avatar_id === avatarId)?.name
+                    }_avatar_preview.webp`}
                   />
                 </div>
               </div>
@@ -708,17 +755,17 @@ export default function InteractiveAvatar({
                 <Select
                   className="w-full text-white"
                   classNames={{
-                    label: "text-white",
-                    value: "text-white",
-                    trigger: "bg-gray-800 data-[hover=true]:bg-gray-700",
-                    listbox: "bg-gray-800",
-                    popoverContent: "bg-gray-800",
+                    label: 'text-white',
+                    value: 'text-white',
+                    trigger: 'bg-gray-800 data-[hover=true]:bg-gray-700',
+                    listbox: 'bg-gray-800',
+                    popoverContent: 'bg-gray-800',
                   }}
                   label="Select Language"
                   selectedKeys={[language]}
-                  onChange={(e) => setLanguage(e.target.value)}
+                  onChange={e => setLanguage(e.target.value)}
                 >
-                  {STT_LANGUAGE_LIST.map((lang) => (
+                  {STT_LANGUAGE_LIST.map(lang => (
                     <SelectItem
                       key={lang.key}
                       className="text-white data-[hover=true]:bg-gray-700"
