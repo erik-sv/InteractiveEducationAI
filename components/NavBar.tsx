@@ -79,6 +79,17 @@ export default function NavBar() {
                   Photography 1
                 </NextLink>
               </DropdownItem>
+              <DropdownItem 
+                key="mba"
+                textValue="MBA Tutor"
+              >
+                <NextLink 
+                  href="/mba" 
+                  className="w-full"
+                >
+                  MBA Tutor
+                </NextLink>
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>
@@ -104,6 +115,14 @@ export default function NavBar() {
             className={`w-full ${pathname === "/photography1" ? "text-primary" : "text-foreground"}`}
           >
             Photography 1
+          </NextLink>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <NextLink 
+            href="/mba" 
+            className={`w-full ${pathname === "/mba" ? "text-primary" : "text-foreground"}`}
+          >
+            MBA Tutor
           </NextLink>
         </NavbarMenuItem>
       </NavbarMenu>

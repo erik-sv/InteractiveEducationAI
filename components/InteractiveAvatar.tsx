@@ -27,7 +27,8 @@ import Image from 'next/image';
 import { BsArrowsFullscreen } from 'react-icons/bs';
 
 import { AVATARS, STT_LANGUAGE_LIST } from '@/app/lib/constants';
-import { getPSTTimestamp } from '@/utils/dateUtils';
+import { getPSTTimestamp, formatPSTTimestamp } from '@/utils/dateUtils';
+import ChatHistory from './ChatHistory';
 
 function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
   let timer: NodeJS.Timeout;
@@ -46,7 +47,7 @@ function buildDateTimeFilename(streamId: string) {
   const now = new Date();
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
+  const dd = now.getDate();
   const hh = String(now.getHours()).padStart(2, '0');
   const min = String(now.getMinutes()).padStart(2, '0');
   const sec = String(now.getSeconds()).padStart(2, '0');
@@ -116,6 +117,12 @@ export default function InteractiveAvatar({
 
   // We'll store the final filename after receiving the stream ID
   const sessionFilenameRef = useRef<string | null>(null);
+
+  const [transcriptionHistory, setTranscriptionHistory] = useState<Array<{
+    timestamp: string;
+    type: 'USER' | 'AVATAR';
+    content: string;
+  }>>([]);
 
   useEffect(() => {
     if (defaultAvatarId) {
@@ -194,7 +201,7 @@ export default function InteractiveAvatar({
   // MIME for user mic
   function getSupportedMimeType() {
     if (typeof window === 'undefined' || !window.MediaRecorder) return '';
-    const possibleTypes = ['audio/webm; codecs=opus', 'audio/webm', 'audio/mp4'];
+    const possibleTypes = ['audio/webm; codecs=opus', 'audio/webm', 'audio/mp4']
 
     return possibleTypes.find(type => MediaRecorder.isTypeSupported(type)) || '';
   }
@@ -448,20 +455,57 @@ export default function InteractiveAvatar({
   ]);
 
   // -------------- START / END SESSION --------------
+  const saveTranscription = async () => {
+    if (!transcription.length) return;
+
+    try {
+      const response = await fetch('/api/save-transcription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          streamId: streamIdRef.current,
+          transcription: transcription,
+          timestamp: Date.now(),
+          filename: sessionFilenameRef.current,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save transcription');
+      }
+
+      // Update chat history with the new entry
+      const lastEntry = transcription[transcription.length - 1];
+      if (lastEntry && lastEntry.transcription && 
+          !(lastEntry.type === 'user' && 
+            (lastEntry.content.includes('started speaking') || 
+             lastEntry.content.includes('stopped speaking'))
+          )) {
+        setTranscriptionHistory(prev => [
+          ...prev,
+          {
+            timestamp: formatPSTTimestamp(lastEntry.timestamp),
+            type: lastEntry.type.toUpperCase() as 'USER' | 'AVATAR',
+            content: lastEntry.transcription || lastEntry.content
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error saving transcription:', error);
+    }
+  };
 
   async function fetchAccessToken() {
     try {
       const response = await fetch('/api/get-access-token', { method: 'POST' });
       const token = await response.text();
-
-      console.log('Access Token:', token);
-
       return token;
     } catch (error) {
       console.error('Error fetching access token:', error);
+      return '';
     }
-
-    return '';
   }
 
   async function startSession() {
@@ -669,6 +713,7 @@ export default function InteractiveAvatar({
     <div className="w-full flex flex-col gap-4">
       <Card>
         <CardBody className="flex flex-col justify-center items-center gap-4">
+          {/* Existing avatar stream content */}
           {stream ? (
             <div
               ref={containerRef}
@@ -798,6 +843,12 @@ export default function InteractiveAvatar({
           )}
         </CardBody>
       </Card>
+
+      {/* Chat history */}
+      <ChatHistory 
+        messages={transcriptionHistory}
+        className="mt-6 max-h-[400px] overflow-y-auto"
+      />
     </div>
   );
 }

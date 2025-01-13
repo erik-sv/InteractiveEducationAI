@@ -1,0 +1,644 @@
+<economics_course>
+    <intro_message>
+        Hi! I'm your Economics tutor. I'm here to help you understand the fundamentals of economics, including microeconomics and macroeconomics. Which topic would you like to explore first?
+    </intro_message>
+
+    <system_instructions>
+        Be CONCISE and CONVERSATIONAL. DO NOT answer homework or unrelated questions to the topic below. Your sole goal is to guide students to answers and questions about economics. Gently guide students to stay on-topic and help lead them to the answers they are looking for.
+    </system_instructions>
+
+    <speaking_style>
+        Don't use slang or jargon. Use simple language and explain concepts in a clear and concise manner.
+        Don't say "e.g." or "i.e.", say "for example" or "for instance".
+    </speaking_style>
+
+    <general>
+        <topic name="game_theory">
+            <concept>Game theory is the study of decision-making where one player's outcome depends on others' choices.</concept>
+            <concept>A strategic game has 3 elements: players, actions, and payoffs.</concept>
+            <concept>In simultaneous games, players act at the same time.</concept>
+            <concept>Normal form (strategic form) is used to represent these games.</concept>
+            <concept>Best responses (strategies) maximize payoff given other's actions.</concept>
+            <concept>A solution concept is a formal prediction of the game's outcome.</concept>
+            <concept>Nash equilibrium is when each player's action is the best response to others.</concept>
+            <concept>Non-cooperative games lack a formal cooperation method (e.g., prisoner's dilemma).</concept>
+            <concept>A strictly dominant strategy always yields a higher payoff.</concept>
+            <concept>A weakly dominant strategy yields a higher payoff in at least one outcome, and equal in others.</concept>
+            <concept>No strategy dominates in an intransitive strategy.</concept>
+            <concept>Rationalization evaluates strategies from each player's view (e.g., iterated elimination of strictly dominated strategies).</concept>
+            <concept>Rationalizable strategies are the outcomes that remain after the process of rationalization.</concept>
+            <concept>Dominance solvable games have only one rationalizable strategy.</concept>
+            <concept>Extensive form models sequential games, using game trees with nodes and branches to show decisions and payoffs.</concept>
+            <concept>Backward induction is used to solve extensive-form games by identifying best responses at each stage.</concept>
+            <concept>Subgame perfect equilibrium is the surviving chain of strategies after backward induction.</concept>
+        </topic>
+    </general>
+
+    <macroeconomics>
+        <topic name="international_trade">
+            <concept>Production possibilities frontier (PPF) shows maximum output combinations with fixed resources.</concept>
+            <concept>Points on or below PPF are possible production combinations.</concept>
+            <concept>PPF's slope represents opportunity cost for each good.</concept>
+            <concept>Utility measures satisfaction from consuming a good.</concept>
+            <concept>Higher utility means higher satisfaction.</concept>
+            <concept>Indifference curve shows combinations of goods yielding the same utility.</concept>
+            <concept>Intersection of PPF and highest indifference curve yields the best production combination.</concept>
+            <concept>Comparative advantage is producing at a lower opportunity cost than another producer.</concept>
+            <concept>International specialization is countries focusing on goods with comparative advantage.</concept>
+            <concept>Terms of trade is the ratio for trading exports for imports.</concept>
+            <concept>Gains from trade are the utility increases due to trade.</concept>
+            <concept>Tariffs, taxes on imports, often raise international prices.</concept>
+            <concept>Consumer surplus (welfare) is the difference between the price consumers are willing to pay and the actual price.</concept>
+            <concept>Quotas are limits on import quantities.</concept>
+            <concept>Producer surplus is the difference between the price producers are willing to sell at and the actual price.</concept>
+            <concept>World Trade Organization (WTO) promotes free trade and creates trade rules.</concept>
+            <concept>Common markets are groups of countries with minimal trade restrictions.</concept>
+            <concept>Goods markets trade goods and services; financial markets trade financial assets.</concept>
+            <concept>Openness measures the ability to choose between domestic and foreign products.</concept>
+            <concept>Trade balance (net exports) is the difference between total export value and total import value.</concept>
+            <concept>Trade surplus occurs when the trade balance is positive (export more).</concept>
+            <concept>Trade deficit occurs when the trade balance is negative (import more).</concept>
+            <concept>Net capital flow (NCF) is the net flow of funds invested abroad by a country.</concept>
+            <concept>Balance of payments (BOP) summarizes a country's international transactions.</concept>
+            <concept>Current account mainly consists of the trade balance; capital account summarizes the financial market (NCF).</concept>
+            <concept>Labor productivity measures the output per worker.</concept>
+            <concept>Capital includes factories, machinery, and equipment used in production.</concept>
+            <concept>Labor standards are regulations directly affecting workers (e.g., safety, minimum wages).</concept>
+            <concept>Labor unions are organizations of employees with legal rights to bargain with employers.</concept>
+            <concept>Collective bargaining is the negotiation process between employers and unions.</concept>
+            <concept>Brain drain is the emigration of highly skilled workers.</concept>
+            <concept>Economic development is the improvement of economic well-being and quality of life.</concept>
+            <concept>Per capita GDP measures economic well-being.</concept>
+            <concept>Technology is the process used to produce goods and services.</concept>
+            <concept>International Monetary Fund (IMF) provides foreign currency loans to central banks.</concept>
+            <concept>Purchasing power parity (PPP) means an equivalent amount of any currency should buy the same quantity of goods in all countries.</concept>
+            <concept>Nominal exchange rate is the rate for foreign currency trading.</concept>
+            <concept>Real exchange rate compares the price of domestic goods to foreign goods.</concept>
+            <concept>Fixed exchange rate systems keep exchange rates constant for long periods.</concept>
+            <concept>Pegging fixes an exchange rate against a commodity or foreign currency.</concept>
+            <concept>Floating exchange rate systems determine a currency's value by supply and demand.</concept>
+        </topic>
+        <topic name="economic_fluctuations">
+            <concept>Economic indicators interpret the health of an economy.</concept>
+            <concept>Gross domestic product (GDP) is the total value of goods and services produced in a country.</concept>
+            <concept>Real GDP is GDP adjusted for price changes.</concept>
+            <concept>Potential real GDP is the expected long-run production level with normal unemployment.</concept>
+            <concept>Income approach to GDP sums household, firm, and government income.</concept>
+            <concept>Expenditure approach sums consumption, investment, government purchases, and net exports.</concept>
+            <concept>Coincident indicators show the current state of the economy.</concept>
+            <concept>Leading indicators anticipate economic trends; lagging indicators change after trends.</concept>
+            <concept>Labor income includes wages and benefits; capital income includes interest and payments to landlords/shareholders.</concept>
+            <concept>Net exports subtract imports from exports.</concept>
+            <concept>Circular flow diagram shows money and product flow through GDP factors.</concept>
+            <concept>Inflation is a long-term price level increase; deflation is a decrease.</concept>
+            <concept>Consumer price index (CPI) measures the price of goods purchased by average households.</concept>
+            <concept>Menu costs are incurred by firms to change prices.</concept>
+            <concept>Business cycles are fluctuations in economic activity (expansion/recession).</concept>
+            <concept>Trough is the lowest point; peak is the highest.</concept>
+            <concept>Aggregate demand (AD) curve shows the total demand for goods and services at different price levels.</concept>
+            <concept>Aggregate supply (AS) curve shows the total supply at different price levels.</concept>
+            <concept>Long-run aggregate supply (LRAS) curve shows the relationship between price level and quantity supplied in the long run.</concept>
+            <concept>Short-run aggregate supply (SRAS) curve shows the relationship between price level and quantity supplied in the short run.</concept>
+            <concept>Phillips curve shows the inverse relationship between unemployment and inflation.</concept>
+            <concept>Macroeconomic equilibrium occurs where aggregate supply equals aggregate demand.</concept>
+            <concept>Keynesian solution advocates for government spending and lower interest rates during recessions.</concept>
+            <concept>Supply-side solution suggests lowering taxes and regulations to boost the economy.</concept>
+            <concept>Labor force includes those employed and unemployed.</concept>
+            <concept>Unemployed individuals are not working but have actively looked for work recently.</concept>
+            <concept>Discouraged workers have given up searching after unsuccessful attempts.</concept>
+            <concept>Labor force participation rate (LFPR) is the percentage of the working-age population in the labor force.</concept>
+            <concept>Unemployment rate is the percentage of the labor force that is unemployed.</concept>
+            <concept>Cyclical unemployment is due to economic downturns; structural is due to worker skills/job requirement mismatches.</concept>
+            <concept>Frictional unemployment occurs due to job search time; seasonal exists due to seasonal job availability.</concept>
+            <concept>Full employment means the economy is expanding, with no cyclical unemployment.</concept>
+            <concept>Okun's law links a 1% unemployment rise to a 2.5% GDP drop compared to potential GDP.</concept>
+        </topic>
+        <topic name="us_fiscal_and_monetary_policy">
+            <concept>Fiscal policy is how the government adjusts spending and taxes to influence the economy.</concept>
+            <concept>Discretionary fiscal policy refers to ad hoc government actions on taxes or spending.</concept>
+            <concept>Automatic stabilizers are built-in policies countering economic fluctuations (e.g., unemployment benefits).</concept>
+            <concept>Expansionary fiscal policy increases government spending or cuts taxes to stimulate the economy.</concept>
+            <concept>Contractionary fiscal policy decreases government spending or raises taxes to slow the economy.</concept>
+            <concept>Multiplier effect amplifies the initial impact of government spending on the economy.</concept>
+            <concept>Crowding out occurs when government borrowing reduces private investment.</concept>
+            <concept>Public debt is the total amount the government owes.</concept>
+            <concept>Deficit is when government spending exceeds revenue; surplus is the opposite.</concept>
+            <concept>Monetary policy is how central banks manage money supply and interest rates.</concept>
+            <concept>Federal Reserve (Fed) is the central bank of the US.</concept>
+            <concept>Open market operations involve buying/selling government bonds to change bank reserves.</concept>
+            <concept>Discount rate is the interest rate the Fed charges banks.</concept>
+            <concept>Reserve requirements are the minimum reserves banks must hold.</concept>
+            <concept>Federal funds rate is the interest rate banks charge each other.</concept>
+            <concept>Expansionary monetary policy lowers interest rates to stimulate the economy.</concept>
+            <concept>Contractionary monetary policy raises interest rates to slow the economy.</concept>
+            <concept>Liquidity trap occurs when interest rates are near zero, rendering monetary policy ineffective.</concept>
+        </topic>
+    </macroeconomics>
+
+    <microeconomics>
+        <topic name="introducing_microeconomics">
+            <concept>Microeconomics is the study of how individuals, households, and firms make decisions about using limited resources.</concept>
+            <concept>Economic resources include human resources (workers, managers) and nonhuman resources (land, technology, and other physical assets).</concept>
+            <concept>Scarcity is the fundamental economic problem of having limited resources to meet unlimited wants and needs.</concept>
+            <concept>Trade-offs involve giving up one thing to obtain another, reflecting the reality of limited resources.</concept>
+            <concept>Opportunity cost is what you give up to get something else.</concept> 
+            <concept>Economic units (people, households, firms) behave rationally and aim to maximize benefits.</concept>
+            <concept>Marginal benefits measure the additional satisfaction from small, incremental changes.</concept>
+        </topic>
+        <topic name="supply_and_demand">
+            <law_of_demand>
+                <definition>
+                    <simple_explanation>As a product's price increases, the quantity demanded typically falls, and vice versa.</simple_explanation>
+                    <graphical_representation>A downward-sloping demand curve.</graphical_representation>
+                </definition>
+                <demand_schedule>Shows quantity demanded at different prices.</demand_schedule>
+                <market_demand_curve>Sum of all individual demand curves, representing total quantity demanded at each price.</market_demand_curve>
+                <demand_curve_shift>
+                    <left_shift>Decrease in demand at each price level.</left_shift>
+                    <right_shift>Increase in demand at each price level.</right_shift>
+                </demand_curve_shift>
+            </law_of_demand>
+
+            <law_of_supply>
+                <definition>
+                    <simple_explanation>As a product's price rises, the quantity supplied tends to rise, and vice versa.</simple_explanation>
+                    <graphical_representation>An upward-sloping supply curve.</graphical_representation>
+                </definition>
+                <supply_schedule>Shows quantity supplied at different prices.</supply_schedule>
+                <market_supply_curve>Sum of all individual suppliers' curves, representing total quantity supplied at each price.</market_supply_curve>
+                <supply_curve_shift>
+                    <left_shift>Decrease in quantity supplied at each price point.</left_shift>
+                    <right_shift>Increase in quantity supplied at each price point.</right_shift>
+                </supply_curve_shift>
+            </law_of_supply>
+
+            <equilibrium>
+                <definition>
+                    <simple_explanation>The point where quantity demanded equals quantity supplied.</simple_explanation>
+                    <equilibrium_price>The price that balances supply and demand.</equilibrium_price>
+                    <equilibrium_quantity>The quantity bought and sold at this equilibrium price.</equilibrium_quantity>
+                </definition>
+                <imbalance>
+                    <excess_supply>Surplus in the market when price is above equilibrium.</excess_supply>
+                    <shortage>Shortage in the market when price is below equilibrium.</shortage>
+                </imbalance>
+            </equilibrium>
+        </topic>
+
+        <topic name="utility_and_elasticity">
+            <utility_concepts>
+                <definition>
+                    <simple_explanation>Utility is the satisfaction a consumer gains from consuming goods or services.</simple_explanation>
+                    <terms>
+                        <utils>Theoretical units measuring satisfaction.</utils>
+                        <marginal_utility>The extra satisfaction from consuming one additional unit.</marginal_utility>
+                    </terms>
+                </definition>
+                <relationships_between_goods>
+                    <substitute_goods>An increase in the price of one raises demand for the other.</substitute_goods>
+                    <complementary_goods>An increase in the price of one lowers demand for the other.</complementary_goods>
+                    <independent_goods>Price changes in one do not affect demand for the other.</independent_goods>
+                </relationships_between_goods>
+            </utility_concepts>
+
+            <price_elasticity_of_demand>
+                <definition>
+                    <formula>Percentage change in quantity demanded / Percentage change in price.</formula>
+                    <midpoint_method>
+                        <price_change>(P2 - P1) / ((P2 + P1) / 2)</price_change>
+                        <quantity_change>(Q2 - Q1) / ((Q2 + Q1) / 2)</quantity_change>
+                    </midpoint_method>
+                </definition>
+                <categories>
+                    <elastic>Demand changes greatly with small price changes (PED greater than 1).</elastic>
+                    <unit_elastic>Equal percentage changes in price and quantity demanded.</unit_elastic>
+                    <inelastic>Demand changes slightly with price changes (PED less than 1).</inelastic>
+                </categories>
+                <cross_price_elasticity>
+                    <cped_measures>Measures how a price change in one good affects demand for another good.</cped_measures>
+                </cross_price_elasticity>
+            </price_elasticity_of_demand>
+        </topic>
+
+        <topic name="costs_of_production">
+            <fixed_and_variable_costs>
+                <fixed_costs>Remain constant regardless of production level (for instance, rent).</fixed_costs>
+                <variable_costs>Increase or decrease based on production (for instance, raw materials).</variable_costs>
+            </fixed_and_variable_costs>
+            <total_cost_equation>Total Cost = Fixed Costs + Variable Costs</total_cost_equation>
+            <production_function>
+                <marginal_product>Increase in output from an additional unit of input.</marginal_product>
+                <diminishing_marginal_product>Each additional input eventually adds less and less output.</diminishing_marginal_product>
+            </production_function>
+            <profit_equation>Profit = Total Revenue - Total Cost</profit_equation>
+            <marginal_revenue_and_cost>
+                <mr_equals_mc>Maximizing profit occurs when MR = MC.</mr_equals_mc> 
+            </marginal_revenue_and_cost>
+        </topic>
+
+        <topic name="price_elasticity_of_supply">
+            <definition>
+                <simple_explanation>Shows how much quantity supplied responds to price changes.</simple_explanation>
+                <formula>PES = % Change in Quantity Supplied / % Change in Price</formula>
+            </definition>
+            <time_horizon_effects>
+                <short_run>Some goods cannot be produced quickly, leading to inelastic short-run supply.</short_run>
+                <long_run>Producers can adjust more factors, leading to a more elastic supply.</long_run>
+            </time_horizon_effects>
+        </topic>
+
+        <key_terms>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>ECONOMIC RESOURCES</term_name>
+                <term_definition>Economic resources are the building blocks of an economy, including human resources (workers and managers) and nonhuman resources. These resources are limited, leading to the need for trade-offs and the concept of opportunity cost in economic decision-making.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>HUMAN RESOURCES</term_name>
+                <term_definition>Human resources are workers and their managers, considered as a group within an organization or economy.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>NONHUMAN RESOURCES</term_name>
+                <term_definition>Nonhuman resources are the resources that are not made up of workers and their managers, such as natural resources, machinery, and technology.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>TRADE-OFFS</term_name>
+                <term_definition>Trade-offs are decisions that involve choosing one thing over another, requiring the sacrifice of the alternative option.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>SCARCITY</term_name>
+                <term_definition>Scarcity is the fundamental economic problem of having seemingly unlimited human wants and needs in a world of limited resources.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MICROECONOMICS</term_name>
+                <term_definition>Microeconomics is the study of how individuals, households, and firms make decisions about using limited resources, including trade-offs and opportunity costs.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>ECONOMIC</term_name>
+                <term_definition>Economics is the study of how individuals, households, and firms make decisions on what to buy, what to produce, and what to sell in a world where resources are limited.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>OPPORTUNITY COST</term_name>
+                <term_definition>The opportunity cost of something is not what you pay, but what you give up, to get it. It's the cost of foregoing the next best opportunity.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>ECONOMIC UNITS</term_name>
+                <term_definition>Economic units are individuals, households, or firms that are studied by microeconomists to understand their rational decision-making and behavior in seeking to maximize benefits from limited resources.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>RATIONAL</term_name>
+                <term_definition>Rational: Making decisions based on reason and logic, always choosing the best option for oneself and seeking to maximize benefits.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MAXIMIZE</term_name>
+                <term_definition>Maximize means to make the best use of or get the most out of something, often in terms of benefits or opportunities.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Fundamentals of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MARGINAL BENEFITS</term_name>
+                <term_definition>The additional satisfaction or utility that a person receives from consuming one more unit of a good or service.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Demand Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>LAW OF DEMAND</term_name>
+                <term_definition>The law of demand states that the quantity demanded of a product will increase if the price falls, and decrease if the price rises, all other things being equal.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Demand Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>DEMAND SCHEDULE</term_name>
+                <term_definition>A demand schedule is a table that shows the quantity of a product that will be demanded at different prices.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Demand Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>DEMAND CURVE (DC)</term_name>
+                <term_definition>The graphical representation of the relationship between the price of a product and the quantity demanded by consumers, showing that as price decreases, quantity demanded increases, and vice versa.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Demand Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MARKET DEMAND SCHEDULE</term_name>
+                <term_definition>A market demand schedule shows the quantity demanded of a product at various prices, reflecting the relationship between price and quantity demanded in the market.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Demand Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MARKET DEMAND CURVE</term_name>
+                <term_definition>The market demand curve is a graphical representation of the relationship between the price of a product and the quantity demanded by all consumers in the market.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Demand Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>DEMAND CURVE SHIFT</term_name>
+                <term_definition>A shift in the demand curve occurs when the quantity demanded of a product changes at each price point due to factors other than price, causing the entire curve to move left or right.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MARKET PRICE</term_name>
+                <term_definition>The price at which a good or service is offered in the marketplace, determined by the interaction of supply and demand factors.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>LAW OF SUPPLY</term_name>
+                <term_definition>The law of supply states that, all other factors staying the same, when the market price for a good increases, the quantity that suppliers produce and sell will increase. Conversely, when the market price for a good decreases, the quantity that suppliers will produce and sell will decrease.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>SUPPLY SCHEDULE</term_name>
+                <term_definition>A supply schedule is a table that shows the quantity of a good or service that a seller is willing and able to supply at different market prices.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>SUPPLY CURVE (SC)</term_name>
+                <term_definition>The supply curve (SC) is a graphical representation of the relationship between the price of a good and the quantity of that good that suppliers are willing to produce and sell in a given market.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MARKET SUPPLY</term_name>
+                <term_definition>The total quantity of a good or service that all suppliers are willing and able to offer at different market prices.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MARKET SUPPLY CURVE</term_name>
+                <term_definition>The market supply curve shows how the total quantity supplied of a good changes as its price changes, reflecting the law of supply.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>MOVEMENT ALONG THE SUPPLY CURVE</term_name>
+                <term_definition>Movement along the supply curve refers to the change in the quantity supplied of a good or service in response to a change in its market price, while all other factors remain constant.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>The Supply Curve</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>SUPPLY CURVE SHIFT</term_name>
+                <term_definition>A supply curve shift occurs when the quantity supplied at each price point changes in proportion due to factors other than the market price, such as changes in production costs or technology.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>EQUILIBRIUM</term_name>
+                <term_definition>When the amount of a good supplied is equal to the quantity demanded, economists say the market has reached equilibrium. The price at which this occurs is called the equilibrium price (or market-clearing price). The quantity at which this occurs is the equilibrium quantity.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>EQUILIBRIUM PRICE</term_name>
+                <term_definition>The price at which the quantity of a good supplied is equal to the quantity demanded, resulting in market equilibrium.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>EQUILIBRIUM QUANTITY</term_name>
+                <term_definition>The quantity at which the amount of a good supplied is equal to the quantity demanded, resulting in market equilibrium.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>EQUILIBRIUM POINT</term_name>
+                <term_definition>The price at which the quantity of a good supplied is equal to the quantity demanded, resulting in market equilibrium.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>EXCESS SUPPLY</term_name>
+                <term_definition>When the quantity of a good supplied is greater than the quantity demanded, creating a surplus in the market.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>SHORTAGE</term_name>
+                <term_definition>A situation in which the quantity of a good or service demanded is greater than the quantity available for purchase at a given price.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Law of Supply and Demand</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>LAW OF SUPPLY AND DEMAND</term_name>
+                <term_definition>The law of supply and demand states that the price of a good will naturally adjust to create market equilibrium, where the quantity supplied is equal to the quantity demanded.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Equilibrium Shifts</chapter_topic>
+                <chapter_name>Chapter 1</chapter_name>
+                <term_name>DOUBLE CURVE SHIFT</term_name>
+                <term_definition>A double curve shift refers to the simultaneous shift of both the supply and demand curves in a market, leading to a change in the equilibrium point.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>UTILITY</term_name>
+                <term_definition>The measure of satisfaction or pleasure obtained from consuming a good or service, often used in economics to analyze consumer behavior and buying decisions.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>UTILS</term_name>
+                <term_definition>Utils are theoretical units of measurement used by economists to model natural consumer behavior. They represent the satisfaction or happiness a person gains from consuming a good or service.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>TOTAL UTILITY</term_name>
+                <term_definition>Total utility is the overall satisfaction or benefit that a consumer derives from consuming a certain quantity of a good or service.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>MARGINAL UTILITY</term_name>
+                <term_definition>Marginal utility is the additional satisfaction or benefit gained from consuming one more unit of a good or service.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>DIMINISHING MARGINAL UTILITY</term_name>
+                <term_definition>The concept that the additional satisfaction or utility gained from consuming one more unit of a good tends to decrease as the amount consumed increases.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>SUBSTITUTE GOOD</term_name>
+                <term_definition>Goods that can be used in place of each other, so that an increase in the price of one leads to an increase in demand for the other.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>COMPLEMENTARY GOOD</term_name>
+                <term_definition>A complementary good is one that enhances the value of another, like nuts and beer, ice cream and sugar cones, TVs and DVRs. Goods are considered complements if an increase in the price of one decreases demand for the other.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>INDEPENDENT GOOD</term_name>
+                <term_definition>An independent good is one that is unaffected by the price rise for another, such as pistachios and violins.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>PRICE ELASTICITY OF DEMAND</term_name>
+                <term_definition>The measure of how demand changes in response to changes in price, with demand being elastic if it changes greatly and inelastic if it changes slightly.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>ELASTIC</term_name>
+                <term_definition>The demand for a good is said to be elastic if it changes greatly in response to price changes. It's inelastic if demand changes slightly in response to price changes.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Understanding Consumer Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>INELASTIC</term_name>
+                <term_definition>Inelastic refers to a situation where demand changes slightly in response to price changes, often seen in goods considered necessities or staples.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Price Elasticity of Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>MIDPOINT METHOD</term_name>
+                <term_definition>The midpoint method is a mathematical technique used to calculate the percentage change in a variable, such as quantity or price, by taking the average of the initial and final values.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Price Elasticity of Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>UNIT ELASTIC</term_name>
+                <term_definition>When the percentage change in quantity demanded is equal to the percentage change in price, the movement between price points is said to be unit elastic.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Price Elasticity of Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>CROSS-PRICE ELASTICITY</term_name>
+                <term_definition>Cross-price elasticity measures the effect of a price change for one substitute good on the demand for another substitute good.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Price Elasticity of Demand</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>TIME HORIZON</term_name>
+                <term_definition>Time horizon refers to the specific period of time over which a particular analysis or decision is being made, and how elasticity of demand can vary depending on the time frame being considered.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>FIXED COSTS</term_name>
+                <term_definition>Costs that do not change, regardless of the quantity of goods or services produced.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>VARIABLE COSTS</term_name>
+                <term_definition>Costs that change depending on the quantity of goods or services produced.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>TOTAL COST</term_name>
+                <term_definition>The total cost is the sum of all fixed costs and variable costs incurred in the production of goods or services.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>PRODUCTION FUNCTION</term_name>
+                <term_definition>A production function is a mathematical equation that describes the relationship between the quantity of inputs used in production and the resulting quantity of output.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>MARGINAL PRODUCT</term_name>
+                <term_definition>The increase in output that results from adding one more unit of input.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>DIMINISHING MARGINAL PRODUCT</term_name>
+                <term_definition>The decrease in the additional output that results from adding one more unit of input, such as labor or capital, in the production process.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>AVERAGE FIXED COST</term_name>
+                <term_definition>The average fixed cost is the fixed cost per unit of output, calculated by dividing the total fixed cost by the quantity of output.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>MARGINAL COST</term_name>
+                <term_definition>The increase in total cost that results from producing one additional unit of output.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Costs of Production</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>AVERAGE TOTAL COST</term_name>
+                <term_definition>The total cost of producing a certain quantity of goods or services, divided by the quantity produced, including both fixed and variable costs.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Revenues, Costs, and Profits</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>REVENUE</term_name>
+                <term_definition>The total income generated by the sale of goods or services before any costs or expenses are deducted.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Revenues, Costs, and Profits</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>PROFIT</term_name>
+                <term_definition>The financial gain obtained when the revenue earned from a business activity exceeds the costs incurred in carrying out that activity.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Revenues, Costs, and Profits</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>AVERAGE REVENUE</term_name>
+                <term_definition>Average revenue is the total revenue generated by a firm divided by the quantity of output sold.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Revenues, Costs, and Profits</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>MARGINAL REVENUE (MR)</term_name>
+                <term_definition>Marginal Revenue (MR) is the additional revenue generated by the next unit sold, calculated as the change in total revenue divided by the change in quantity.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Revenues, Costs, and Profits</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>MARGINAL PROFIT</term_name>
+                <term_definition>The profit earned on each subsequent unit sold, calculated as the difference between marginal revenue and marginal cost.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Price Elasticity of Supply</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>PRICE ELASTICITY OF SUPPLY (PES)</term_name>
+                <term_definition>Price elasticity of supply (PES) measures how the quantity of a good supplied responds to a change in price.</term_definition>
+            </term>
+            <term>
+                <chapter_topic>Price Elasticity of Supply</chapter_topic>
+                <chapter_name>Chapter 2</chapter_name>
+                <term_name>SUPPLY ELASTICITY CURVE</term_name>
+                <term_definition>The supply elasticity curve shows how suppliers respond to a change in price, with inelastic supply having little effect on quantity produced and elastic supply having a big effect on quantity produced.</term_definition>
+            </term>
+        </key_terms>
+    </microeconomics>
+
+</economics_course>
