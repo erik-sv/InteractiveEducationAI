@@ -226,7 +226,7 @@ export default function InteractiveAvatar({
                 {
                   timestamp: formatPSTTimestamp(lastEntry.timestamp),
                   type: lastEntry.type.toUpperCase() as 'USER' | 'AVATAR',
-                  content: lastEntry.transcription,
+                  content: lastEntry.transcription || '',
                   isComplete: !lastEntry.isPartial,
                 },
               ];
@@ -578,7 +578,7 @@ export default function InteractiveAvatar({
                 {
                   timestamp: formatPSTTimestamp(entry.timestamp),
                   type: entry.type.toUpperCase() as 'USER' | 'AVATAR',
-                  content: entry.transcription,
+                  content: entry.transcription || '',
                   isComplete: !entry.isPartial,
                 },
               ];
