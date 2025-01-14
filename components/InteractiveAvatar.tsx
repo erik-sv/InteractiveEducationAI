@@ -26,9 +26,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { BsArrowsFullscreen } from 'react-icons/bs';
 
+import ChatHistory from './ChatHistory';
+
 import { AVATARS, STT_LANGUAGE_LIST } from '@/app/lib/constants';
 import { getPSTTimestamp, formatPSTTimestamp } from '@/utils/dateUtils';
-import ChatHistory from './ChatHistory';
 
 function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
   let timer: NodeJS.Timeout;
@@ -118,11 +119,14 @@ export default function InteractiveAvatar({
   // We'll store the final filename after receiving the stream ID
   const sessionFilenameRef = useRef<string | null>(null);
 
-  const [transcriptionHistory, setTranscriptionHistory] = useState<Array<{
-    timestamp: string;
-    type: 'USER' | 'AVATAR';
-    content: string;
-  }>>([]);
+  const [transcriptionHistory, setTranscriptionHistory] = useState<
+    Array<{
+      timestamp: string;
+      type: 'USER' | 'AVATAR';
+      content: string;
+      isComplete: boolean;
+    }>
+  >([]);
 
   useEffect(() => {
     if (defaultAvatarId) {
@@ -189,6 +193,48 @@ export default function InteractiveAvatar({
     (updater: (prev: TranscriptionEntry[]) => TranscriptionEntry[]) => {
       setTranscription(prev => {
         const updated = updater(prev);
+        const lastEntry = updated[updated.length - 1];
+
+        // Update chat history when we have a new transcription
+        if (lastEntry && lastEntry.transcription) {
+          setTranscriptionHistory(prev => {
+            // Don't show system messages or partial transcriptions
+            if (
+              lastEntry.type === 'system' ||
+              (lastEntry.type === 'user' &&
+                (lastEntry.content.includes('started speaking') ||
+                  lastEntry.content.includes('stopped speaking')))
+            ) {
+              return prev;
+            }
+
+            // For avatar messages, only show final ones
+            if (lastEntry.type === 'avatar' && lastEntry.isPartial) {
+              return prev;
+            }
+
+            // Check if this exact message already exists
+            const exists = prev.some(
+              msg =>
+                msg.type === (lastEntry.type.toUpperCase() as 'USER' | 'AVATAR') &&
+                msg.content === lastEntry.transcription
+            );
+
+            if (!exists) {
+              return [
+                ...prev,
+                {
+                  timestamp: formatPSTTimestamp(lastEntry.timestamp),
+                  type: lastEntry.type.toUpperCase() as 'USER' | 'AVATAR',
+                  content: lastEntry.transcription,
+                  isComplete: !lastEntry.isPartial,
+                },
+              ];
+            }
+
+            return prev;
+          });
+        }
 
         debouncedSaveTranscription(updated);
 
@@ -201,7 +247,7 @@ export default function InteractiveAvatar({
   // MIME for user mic
   function getSupportedMimeType() {
     if (typeof window === 'undefined' || !window.MediaRecorder) return '';
-    const possibleTypes = ['audio/webm; codecs=opus', 'audio/webm', 'audio/mp4']
+    const possibleTypes = ['audio/webm; codecs=opus', 'audio/webm', 'audio/mp4'];
 
     return possibleTypes.find(type => MediaRecorder.isTypeSupported(type)) || '';
   }
@@ -215,6 +261,7 @@ export default function InteractiveAvatar({
 
         return;
       }
+
       const formData = new FormData();
 
       formData.append('audio', audioBlob, `audio.${audioBlob.type.split('/')[1] || 'webm'}`);
@@ -232,24 +279,48 @@ export default function InteractiveAvatar({
 
           return;
         }
+
         const { transcription: text } = await response.json();
 
         console.log('Transcription successful (User):', text);
 
-        // Insert the recognized text into the last user line that has no transcription
+        // Add a new transcription entry for the user
         setAndSaveTranscription(prev => {
-          const lastUserIndex = [...prev]
-            .reverse()
-            .findIndex(e => e.type === 'user' && !e.transcription);
+          const timestamp = userStopTimestampRef.current || getPSTTimestamp();
+          // Create a new entry for this transcription
+          const newTranscription = {
+            timestamp,
+            type: 'user' as const,
+            content: 'Transcription successful (User)',
+            transcription: text,
+            isPartial: false,
+          };
 
-          if (lastUserIndex < 0) return prev;
+          // Add to chat history immediately
+          setTranscriptionHistory(prevHistory => {
+            // Check if this exact message already exists
+            const exists = prevHistory.some(msg => msg.type === 'USER' && msg.content === text);
 
-          const actualIndex = prev.length - 1 - lastUserIndex;
-          const updated = [...prev];
+            if (!exists) {
+              return [
+                ...prevHistory,
+                {
+                  timestamp: formatPSTTimestamp(newTranscription.timestamp),
+                  type: 'USER',
+                  content: text,
+                  isComplete: true,
+                },
+              ];
+            }
 
-          updated[actualIndex] = { ...updated[actualIndex], transcription: text };
+            return prevHistory;
+          });
 
-          return updated;
+          // Clear the timestamp ref after using it
+          userStopTimestampRef.current = null;
+
+          // Return updated transcription array with new entry
+          return [...prev, newTranscription];
         });
       } catch (err) {
         console.error('Error in user transcription:', err);
@@ -296,11 +367,15 @@ export default function InteractiveAvatar({
     recorder.start();
   }, [handleUserTranscription, mediaRecorderMimeType]);
 
-  const stopRecording = useCallback((type: 'user') => {
+  const stopRecording = useCallback((type: 'user', stopTimestamp?: string) => {
     if (type === 'user') {
       if (userMediaRecorderRef.current?.state === 'recording') {
         console.log('Stopping user recording');
         try {
+          // Store timestamp in ref for use in handleUserTranscription
+          if (stopTimestamp) {
+            userStopTimestampRef.current = stopTimestamp;
+          }
           userMediaRecorderRef.current.stop();
         } catch (err) {
           console.error('Error stopping user recorder:', err);
@@ -405,10 +480,12 @@ export default function InteractiveAvatar({
     const onUserStop = () => {
       if (!isSessionActiveRef.current) return;
       console.log('>>>>> User stopped talking');
-      stopRecording('user');
+      const stopTimestamp = getPSTTimestamp(); // Store timestamp when user stops
+
+      stopRecording('user', stopTimestamp); // Pass timestamp to stopRecording
       setAndSaveTranscription(prev => [
         ...prev,
-        { timestamp: getPSTTimestamp(), type: 'user', content: 'Stopped speaking' },
+        { timestamp: stopTimestamp, type: 'user', content: 'Stopped speaking' },
       ]);
     };
 
@@ -476,22 +553,41 @@ export default function InteractiveAvatar({
         throw new Error('Failed to save transcription');
       }
 
-      // Update chat history with the new entry
-      const lastEntry = transcription[transcription.length - 1];
-      if (lastEntry && lastEntry.transcription && 
-          !(lastEntry.type === 'user' && 
-            (lastEntry.content.includes('started speaking') || 
-             lastEntry.content.includes('stopped speaking'))
-          )) {
-        setTranscriptionHistory(prev => [
-          ...prev,
-          {
-            timestamp: formatPSTTimestamp(lastEntry.timestamp),
-            type: lastEntry.type.toUpperCase() as 'USER' | 'AVATAR',
-            content: lastEntry.transcription || lastEntry.content
-          }
-        ]);
-      }
+      // Update chat history with completed transcriptions
+      transcription.forEach(entry => {
+        if (
+          entry.transcription &&
+          entry.type !== 'system' &&
+          !(
+            entry.type === 'user' &&
+            (entry.content.includes('started speaking') ||
+              entry.content.includes('stopped speaking'))
+          )
+        ) {
+          setTranscriptionHistory(prev => {
+            // Check if this message already exists
+            const exists = prev.some(
+              msg =>
+                msg.type === (entry.type.toUpperCase() as 'USER' | 'AVATAR') &&
+                msg.content === entry.transcription
+            );
+
+            if (!exists) {
+              return [
+                ...prev,
+                {
+                  timestamp: formatPSTTimestamp(entry.timestamp),
+                  type: entry.type.toUpperCase() as 'USER' | 'AVATAR',
+                  content: entry.transcription,
+                  isComplete: !entry.isPartial,
+                },
+              ];
+            }
+
+            return prev;
+          });
+        }
+      });
     } catch (error) {
       console.error('Error saving transcription:', error);
     }
@@ -501,9 +597,11 @@ export default function InteractiveAvatar({
     try {
       const response = await fetch('/api/get-access-token', { method: 'POST' });
       const token = await response.text();
+
       return token;
     } catch (error) {
       console.error('Error fetching access token:', error);
+
       return '';
     }
   }
@@ -709,6 +807,9 @@ export default function InteractiveAvatar({
     }
   }, [stream]);
 
+  // Add ref for storing user stop timestamp
+  const userStopTimestampRef = useRef<string | null>(null);
+
   return (
     <div className="w-full flex flex-col gap-4">
       <Card>
@@ -844,11 +945,16 @@ export default function InteractiveAvatar({
         </CardBody>
       </Card>
 
-      {/* Chat history */}
-      <ChatHistory 
-        messages={transcriptionHistory}
-        className="mt-6 max-h-[400px] overflow-y-auto"
-      />
+      {(transcriptionHistory.length > 0 || isSessionActive) && (
+        <Card className="mt-4">
+          <CardBody>
+            <ChatHistory
+              className="max-h-[400px] overflow-y-auto"
+              messages={transcriptionHistory}
+            />
+          </CardBody>
+        </Card>
+      )}
     </div>
   );
 }

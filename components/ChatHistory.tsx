@@ -4,6 +4,7 @@ interface Message {
   timestamp: string;
   type: 'USER' | 'AVATAR';
   content: string;
+  isComplete: boolean;
 }
 
 interface ChatHistoryProps {
@@ -27,6 +28,13 @@ export default function ChatHistory({ messages, className = '' }: ChatHistoryPro
             }`}
           >
             <p>{message.content}</p>
+            {!message.isComplete && message.type === 'AVATAR' && (
+              <div className="flex gap-1 mt-1 h-2">
+                <div className="w-1 h-1 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1 h-1 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1 h-1 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            )}
             <p className="text-xs mt-1 opacity-60">{message.timestamp}</p>
           </div>
         </div>
