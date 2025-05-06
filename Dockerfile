@@ -32,8 +32,18 @@ COPY --from=builder /app/public ./public
 # Ensure /app/transcriptions exists for persistent storage (Railway volume mount)
 RUN mkdir -p /app/transcriptions
 
-# Expose port 3000
-EXPOSE 3000
+# Install Nginx in the production image
+RUN apk add --no-cache nginx
 
-# Command to run the application
-CMD ["npm", "start"]
+# Copy nginx config
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Copy start.sh
+COPY ./start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Expose port 8080 for Railway
+EXPOSE 8080
+
+# Use start.sh as entrypoint
+CMD ["/start.sh"]
