@@ -62,6 +62,11 @@ export default function NavBar() {
               className="w-[200px]"
               itemClasses={{ base: 'gap-4' }}
             >
+              <DropdownItem key="project-overview" textValue="Project Overview">
+                <NextLink className="w-full" href="/education">
+                  Project Overview
+                </NextLink>
+              </DropdownItem>
               <DropdownItem key="photography1" textValue="Photography 1">
                 <NextLink className="w-full" href="/photography1">
                   Photography 1
