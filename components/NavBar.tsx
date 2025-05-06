@@ -47,23 +47,15 @@ export default function NavBar() {
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger>
-              <NextLink
-                aria-expanded="false"
-                aria-haspopup="listbox"
+              <Button
+                disableRipple
                 className="p-0 bg-transparent data-[hover=true]:bg-transparent flex items-center"
-                href="/"
+                endContent={<ChevronDown className="text-small" />}
+                radius="sm"
+                variant="light"
               >
-                <Button
-                  disableRipple
-                  as="span"
-                  className="p-0 bg-transparent data-[hover=true]:bg-transparent flex items-center"
-                  endContent={<ChevronDown className="text-small" />}
-                  radius="sm"
-                  variant="light"
-                >
-                  Education
-                </Button>
-              </NextLink>
+                Education
+              </Button>
             </DropdownTrigger>
             <DropdownMenu
               aria-label="Education pages"
@@ -108,30 +100,16 @@ export default function NavBar() {
           </NextLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <NextLink
-            aria-expanded="false"
-            aria-haspopup="listbox"
-            className="w-full flex items-center"
-            href="/"
-          >
-            <span className="flex items-center">
-              Education <ChevronDown className="text-small ml-1" />
-            </span>
-          </NextLink>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
           <Dropdown>
             <DropdownTrigger>
               <Button
                 disableRipple
-                aria-expanded="false"
-                aria-haspopup="listbox"
-                className="p-0 bg-transparent data-[hover=true]:bg-transparent w-full text-left"
+                className="p-0 bg-transparent data-[hover=true]:bg-transparent w-full text-left justify-start"
                 endContent={<ChevronDown className="text-small" />}
                 radius="sm"
                 variant="light"
               >
-                More Education
+                Education
               </Button>
             </DropdownTrigger>
             <DropdownMenu

@@ -1,88 +1,162 @@
-import fs from 'fs';
 import path from 'path';
-import { promises as fsPromises } from 'fs';
+import fs from 'fs/promises';
 
-import { XMLParser } from 'fast-xml-parser';
 import { NextResponse } from 'next/server';
+import { XMLParser } from 'fast-xml-parser';
 
-/**
- * GET /api/get-healthcare-instructions
- * Retrieves a list of healthcare instruction XML files with their names, paths, and intro messages.
- * Response format: { success, data, error }
- */
+// Helper to safely extract text, including from CDATA sections
+const getText = (node: any): string => {
+  if (typeof node === 'string') return node.trim();
+  if (node && typeof node === 'object' && node['#text']) return String(node['#text']).trim();
+  if (node && typeof node === 'object' && node.__cdata) return String(node.__cdata).trim();
+
+  return '';
+};
+
 export async function GET() {
-  const instructionsDir = path.join(process.cwd(), 'app', 'ai_instructions', 'healthcare');
-  let files: string[] = [];
+  // Determine base directory
+  let baseDir = process.cwd();
+  const isDocker =
+    process.env.DOCKER === 'true' ||
+    fs
+      .access('/app')
+      .then(() => true)
+      .catch(() => false);
+
+  // In Docker, the files are copied to /app directly, not in /app/app
+  if (isDocker || baseDir.endsWith('/app') || baseDir.endsWith('\\app')) {
+    baseDir = '/app';
+  } else {
+    // Check if we're in a subdirectory structure
+    try {
+      const appDirExists = await fs
+        .access(path.join(baseDir, 'app'))
+        .then(() => true)
+        .catch(() => false);
+
+      if (appDirExists) {
+      }
+    } catch (err) {}
+  }
+
+  const instructionsDir = path.join(baseDir, 'ai_instructions', 'healthcare');
 
   try {
-    files = fs.readdirSync(instructionsDir).filter(file => file.endsWith('.xml'));
-  } catch (err) {
-    // Optionally use structured logging here for production
-    // logger.error({ event: 'dir_not_found', instructionsDir, err });
+    // First, check if the directory exists
+    try {
+      await fs.access(instructionsDir);
+    } catch (accessErr) {
+      // Try alternative paths if the directory doesn't exist
+      const altPaths = [
+        '/app/ai_instructions/healthcare',
+        path.join(process.cwd(), 'ai_instructions', 'healthcare'),
+        path.join(process.cwd(), 'app', 'ai_instructions', 'healthcare'),
+      ];
 
-    return NextResponse.json(
-      {
+      let foundPath = null;
+
+      for (const altPath of altPaths) {
+        try {
+          await fs.access(altPath);
+          foundPath = altPath;
+          break;
+        } catch (e) {}
+      }
+
+      if (foundPath) {
+        return processInstructionsDirectory(foundPath);
+      }
+
+      return NextResponse.json({
         success: false,
         data: null,
         error: {
           code: 'DIR_NOT_FOUND',
-          message: `Instructions directory not found: ${instructionsDir}`,
-          details: err,
+          message: `Healthcare instructions directory not found at ${instructionsDir}. CWD: ${baseDir}. Initial CWD: ${process.cwd()}`,
+          details: {
+            errno: (accessErr as NodeJS.ErrnoException).errno,
+            syscall: (accessErr as NodeJS.ErrnoException).syscall,
+            path: instructionsDir,
+          },
         },
+      });
+    }
+
+    return processInstructionsDirectory(instructionsDir);
+  } catch (err) {
+    return NextResponse.json({
+      success: false,
+      data: null,
+      error: {
+        code: 'SERVER_ERROR',
+        message: 'Failed to read instructions directory',
+        details: err instanceof Error ? { message: err.message } : null,
       },
-      { status: 404 }
-    );
+    });
   }
+}
 
+async function processInstructionsDirectory(instructionsDir: string) {
   try {
+    const files = await fs.readdir(instructionsDir);
+
+    const xmlFiles = files.filter(file => file.endsWith('.xml'));
+
     const instructions = await Promise.all(
-      files.map(async file => {
-        const filePath = path.join(instructionsDir, file);
-        let introMessage = 'Introduction not available for this item.';
-
+      xmlFiles.map(async file => {
         try {
-          const xmlContent = await fsPromises.readFile(filePath, 'utf8');
-          const parser = new XMLParser({ ignoreAttributes: false });
-          const parsedXml = parser.parse(xmlContent);
+          const filePath = path.join(instructionsDir, file);
+          const content = await fs.readFile(filePath, 'utf8');
 
-          const extractedMessage =
-            parsedXml?.instruction?.intro_message ||
-            parsedXml?.scenario?.intro_message ||
-            parsedXml?.document?.intro_message ||
-            parsedXml?.root?.intro_message ||
-            parsedXml?.memory_care_assistant?.intro_message;
+          const parser = new XMLParser({
+            ignoreAttributes: false,
+            attributeNamePrefix: '@_',
+            textNodeName: '#text',
+            cdataPropName: '__cdata',
+            trimValues: true,
+          });
 
-          if (typeof extractedMessage === 'string' && extractedMessage.trim() !== '') {
-            introMessage = extractedMessage;
-          } else if (typeof extractedMessage === 'object' && extractedMessage['#text']) {
-            introMessage = extractedMessage['#text'];
+          const result = parser.parse(content);
+
+          // Extract introduction from the XML
+          let intro = '';
+
+          if (
+            result.HEALTHCARE_INSTRUCTION_SET &&
+            result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW &&
+            result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW.INTRODUCTION
+          ) {
+            intro = getText(result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW.INTRODUCTION);
           }
-        } catch (parseError) {}
 
-        return {
-          name: file,
-          path: `/app/ai_instructions/healthcare/${file}`,
-          introMessage,
-        };
+          return {
+            fileName: file,
+            introduction: intro,
+          };
+        } catch (parseError) {
+          return {
+            fileName: file,
+            introduction: 'Failed to parse introduction',
+          };
+        }
       })
     );
 
-    return NextResponse.json(
-      { success: true, data: { instructions }, error: null },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        data: null,
-        error: {
-          code: 'PROCESSING_ERROR',
-          message: 'Failed to process healthcare instructions.',
-          details: error,
-        },
+    return NextResponse.json({
+      success: true,
+      data: {
+        instructions,
       },
-      { status: 500 }
-    );
+    });
+  } catch (err) {
+    return NextResponse.json({
+      success: false,
+      data: null,
+      error: {
+        code: 'PROCESSING_ERROR',
+        message: 'Failed to process instructions',
+        details: err instanceof Error ? { message: err.message } : null,
+      },
+    });
   }
 }

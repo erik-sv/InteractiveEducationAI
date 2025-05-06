@@ -10,6 +10,7 @@ interface InstructionFile {
   name: string;
   path: string;
   introMessage: string;
+  fileName: string;
 }
 
 export default function HealthcarePage() {
@@ -28,14 +29,28 @@ export default function HealthcarePage() {
     const fetchInstructions = async () => {
       try {
         const response = await fetch('/api/get-healthcare-instructions');
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error?.message || 'Failed to load instructions');
+        }
+
+        if (!data.data?.instructions || !Array.isArray(data.data.instructions)) {
+          throw new Error('Invalid instructions data format');
+        }
 
         setInstructions(data.data.instructions);
         if (data.data.instructions.length > 0) {
-          setSelectedInstruction(data.data.instructions[0].name);
+          setSelectedInstruction(data.data.instructions[0].fileName);
         }
       } catch (error) {
-        setError('Error loading instructions');
+        setError(
+          `Error loading instructions: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     };
 
@@ -44,63 +59,60 @@ export default function HealthcarePage() {
 
   useEffect(() => {
     if (selectedInstruction && instructions.length > 0) {
-      const currentInstruction = instructions.find(inst => inst.name === selectedInstruction);
+      const currentInstruction = instructions.find(inst => inst.fileName === selectedInstruction);
 
       if (currentInstruction) {
         setIntroMessage(currentInstruction.introMessage);
+        fetchKnowledgeBase(selectedInstruction);
       }
     }
   }, [selectedInstruction, instructions]);
 
-  useEffect(() => {
-    const fetchKnowledgeBase = async () => {
-      if (!selectedInstruction) return;
-      setKnowledgeBase(''); // Clear previous knowledge base
-      setUserInstructionsHtml(null); // Clear previous instructions
-      setIsLoading(true);
-      setError(null);
+  const fetchKnowledgeBase = async (fileName: string) => {
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        const response = await fetch(
-          `/api/get-healthcare-knowledge-base?file=${selectedInstruction}`
-        );
+    try {
+      const response = await fetch(
+        `/api/get-healthcare-knowledge-base?fileName=${encodeURIComponent(fileName)}`
+      );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-
-        if (result.success) {
-          setKnowledgeBase(result.data.knowledgeBase || '');
-          if (result.data.userInstructionsHtml) {
-            const { title, sanitizedHtml } = extractTitleAndSanitizeHtml(
-              result.data.userInstructionsHtml
-            );
-
-            setScenarioTitle(title);
-            setUserInstructionsHtml(sanitizedHtml);
-          } else {
-            setScenarioTitle('');
-            setUserInstructionsHtml(null);
-          }
-        } else {
-          throw new Error(result.error?.message || 'Failed to load knowledge base');
-        }
-      } catch (err: any) {
-        setError(err.message);
-        setKnowledgeBase('');
-        setUserInstructionsHtml(null); // Clear instructions on error
-        setScenarioTitle('');
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
+      const data = await response.json();
 
-    fetchKnowledgeBase();
-  }, [selectedInstruction]);
+      if (data.success) {
+        setKnowledgeBase(data.data.content?.memory_care_assistant || '');
+
+        if (data.data.userInstructions) {
+          const { title, sanitizedHtml } = extractTitleAndSanitizeHtml(data.data.userInstructions);
+
+          setScenarioTitle(title);
+          setUserInstructionsHtml(sanitizedHtml);
+        } else {
+          setScenarioTitle('');
+          setUserInstructionsHtml(null);
+        }
+      } else {
+        throw new Error(data.error?.message || 'Failed to load knowledge base');
+      }
+    } catch (err: any) {
+      setError(err.message);
+      setKnowledgeBase('');
+      setUserInstructionsHtml(null); // Clear instructions on error
+      setScenarioTitle('');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Utility to format file names into user-friendly names
-  function formatInstructionName(name: string) {
+  function formatInstructionName(name: string | undefined | null): string {
+    if (!name || typeof name !== 'string') {
+      return 'Unnamed Instruction'; // Default placeholder for invalid names
+    }
+
     return name
       .replace(/_/g, ' ')
       .replace(/\.xml$/, '')
@@ -144,6 +156,26 @@ export default function HealthcarePage() {
     <div className="min-h-screen w-full flex flex-col">
       <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-[900px] w-full mx-auto py-8 space-y-8">
+          {error && (
+            <div
+              className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+              role="alert"
+            >
+              <div className="font-medium">Error:</div>
+              <div>{error}</div>
+              <div className="mt-2">
+                <details>
+                  <summary>Debug Info</summary>
+                  <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto max-h-[200px]">
+                    {`CWD: ${window.location.href}
+Selected Instruction: ${selectedInstruction || 'none'}
+Instructions Count: ${instructions.length}
+Knowledge Base Length: ${knowledgeBase ? 'present' : 'empty'}`}
+                  </pre>
+                </details>
+              </div>
+            </div>
+          )}
           <div className="text-center space-y-4">
             <h1 className="text-4xl sm:text-5xl font-bold gradient-text">Healthcare Assistant</h1>
             <p className="text-xl text-gray-300">Your Personal Healthcare Assistant</p>
@@ -154,8 +186,8 @@ export default function HealthcarePage() {
                 onChange={e => setSelectedInstruction(e.target.value)}
               >
                 {instructions.map(instruction => (
-                  <SelectItem key={instruction.name} value={instruction.name}>
-                    {formatInstructionName(instruction.name)}
+                  <SelectItem key={instruction.fileName} value={instruction.fileName}>
+                    {formatInstructionName(instruction.fileName)}
                   </SelectItem>
                 ))}
               </Select>
@@ -168,7 +200,6 @@ export default function HealthcarePage() {
             )}
           </div>
           <div className="w-full bg-gray-800/50 rounded-xl shadow-lg p-4 sm:p-6">
-            {error && <p className="text-red-500 text-center">Error: {error}</p>}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               {/* Instructions Panel (New) */}
               {userInstructionsHtml && (
