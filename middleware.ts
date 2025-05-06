@@ -2,22 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Subdomain routing middleware for Cloudflare+Nginx+Railway setup.
- * Allows routing based on subdomain (Host header).
- * - demos.advantageintegrationai.com -> /
- * - education.advantageintegrationai.com -> /education
  * - healthcare.advantageintegrationai.com -> /healthcare
+ * - all other subdomains (including education) -> /
  */
 export function middleware(req: NextRequest) {
   const host = req.headers.get('host') || '';
 
-  if (host.startsWith('education.')) {
-    return NextResponse.rewrite(new URL('/education', req.url));
-  }
   if (host.startsWith('healthcare.')) {
     return NextResponse.rewrite(new URL('/healthcare', req.url));
   }
 
-  // Default: demos or root
+  // Default: all other subdomains (including education) go to main index
   return NextResponse.next();
 }
 

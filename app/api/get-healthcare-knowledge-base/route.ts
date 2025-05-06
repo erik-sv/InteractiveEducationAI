@@ -30,7 +30,13 @@ export async function GET(req: Request) {
 
   const xmlFilePath = path.join(process.cwd(), 'app', 'ai_instructions', 'healthcare', file);
   const htmlFileName = `USER_INSTRUCTIONS_${file.replace(/\.xml$/i, '.html')}`;
-  const htmlFilePath = path.join(process.cwd(), 'app', 'user_instructions', 'healthcare', htmlFileName);
+  const htmlFilePath = path.join(
+    process.cwd(),
+    'app',
+    'user_instructions',
+    'healthcare',
+    htmlFileName
+  );
 
   try {
     // Read the main XML knowledge base file

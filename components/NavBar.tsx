@@ -47,17 +47,23 @@ export default function NavBar() {
         <NavbarItem>
           <Dropdown>
             <DropdownTrigger>
-              <Button
-                disableRipple
+              <NextLink
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                className="p-0 bg-transparent data-[hover=true]:bg-transparent"
-                endContent={<ChevronDown className="text-small" />}
-                radius="sm"
-                variant="light"
+                className="p-0 bg-transparent data-[hover=true]:bg-transparent flex items-center"
+                href="/"
               >
-                Education
-              </Button>
+                <Button
+                  disableRipple
+                  as="span"
+                  className="p-0 bg-transparent data-[hover=true]:bg-transparent flex items-center"
+                  endContent={<ChevronDown className="text-small" />}
+                  radius="sm"
+                  variant="light"
+                >
+                  Education
+                </Button>
+              </NextLink>
             </DropdownTrigger>
             <DropdownMenu
               aria-label="Education pages"
@@ -102,6 +108,18 @@ export default function NavBar() {
           </NextLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
+          <NextLink
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            className="w-full flex items-center"
+            href="/"
+          >
+            <span className="flex items-center">
+              Education <ChevronDown className="text-small ml-1" />
+            </span>
+          </NextLink>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
           <Dropdown>
             <DropdownTrigger>
               <Button
@@ -113,7 +131,7 @@ export default function NavBar() {
                 radius="sm"
                 variant="light"
               >
-                Education
+                More Education
               </Button>
             </DropdownTrigger>
             <DropdownMenu

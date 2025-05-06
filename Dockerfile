@@ -29,7 +29,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/app/ai_instructions ./ai_instructions
-COPY --from=builder /app/app/data ./data
 COPY --from=builder /app/app/user_instructions ./user_instructions
 
 # Ensure /app/transcriptions exists for persistent storage (Railway volume mount)
