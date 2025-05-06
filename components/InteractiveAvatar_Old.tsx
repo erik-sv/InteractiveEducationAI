@@ -60,7 +60,6 @@ interface InteractiveAvatarProps {
   defaultAvatarId?: string;
   knowledgeBase?: string;
   introMessage?: string;
-  voiceId?: string;
 }
 
 interface TranscriptionEntry {
@@ -76,7 +75,6 @@ export default function InteractiveAvatar({
   defaultAvatarId,
   knowledgeBase,
   introMessage,
-  voiceId,
 }: InteractiveAvatarProps) {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [isLoadingRepeat, setIsLoadingRepeat] = useState(false);
@@ -124,7 +122,7 @@ export default function InteractiveAvatar({
   const [transcriptionHistory, setTranscriptionHistory] = useState<
     Array<{
       timestamp: string;
-      type: 'user' | 'avatar';
+      type: 'USER' | 'AVATAR';
       content: string;
       isComplete: boolean;
     }>
@@ -199,7 +197,7 @@ export default function InteractiveAvatar({
 
         // Update chat history when we have a new transcription
         if (lastEntry && lastEntry.transcription) {
-          setTranscriptionHistory(prevHistory => {
+          setTranscriptionHistory(prev => {
             // Don't show system messages or partial transcriptions
             if (
               lastEntry.type === 'system' ||
@@ -207,32 +205,34 @@ export default function InteractiveAvatar({
                 (lastEntry.content.includes('started speaking') ||
                   lastEntry.content.includes('stopped speaking')))
             ) {
-              return prevHistory;
+              return prev;
             }
 
             // For avatar messages, only show final ones
             if (lastEntry.type === 'avatar' && lastEntry.isPartial) {
-              return prevHistory;
+              return prev;
             }
 
             // Check if this exact message already exists
-            const exists = prevHistory.some(
-              msg => msg.type === lastEntry.type && msg.content === lastEntry.transcription
+            const exists = prev.some(
+              msg =>
+                msg.type === (lastEntry.type.toUpperCase() as 'USER' | 'AVATAR') &&
+                msg.content === lastEntry.transcription
             );
 
             if (!exists) {
               return [
-                ...prevHistory,
+                ...prev,
                 {
                   timestamp: formatPSTTimestamp(lastEntry.timestamp),
-                  type: lastEntry.type as 'user' | 'avatar',
+                  type: lastEntry.type.toUpperCase() as 'USER' | 'AVATAR',
                   content: lastEntry.transcription || '',
                   isComplete: !lastEntry.isPartial,
                 },
               ];
             }
 
-            return prevHistory;
+            return prev;
           });
         }
 
@@ -299,14 +299,14 @@ export default function InteractiveAvatar({
           // Add to chat history immediately
           setTranscriptionHistory(prevHistory => {
             // Check if this exact message already exists
-            const exists = prevHistory.some(msg => msg.type === 'user' && msg.content === text);
+            const exists = prevHistory.some(msg => msg.type === 'USER' && msg.content === text);
 
             if (!exists) {
               return [
                 ...prevHistory,
                 {
                   timestamp: formatPSTTimestamp(newTranscription.timestamp),
-                  type: 'user',
+                  type: 'USER',
                   content: text,
                   isComplete: true,
                 },
@@ -567,7 +567,9 @@ export default function InteractiveAvatar({
           setTranscriptionHistory(prev => {
             // Check if this message already exists
             const exists = prev.some(
-              msg => msg.type === entry.type && msg.content === entry.transcription
+              msg =>
+                msg.type === (entry.type.toUpperCase() as 'USER' | 'AVATAR') &&
+                msg.content === entry.transcription
             );
 
             if (!exists) {
@@ -575,7 +577,7 @@ export default function InteractiveAvatar({
                 ...prev,
                 {
                   timestamp: formatPSTTimestamp(entry.timestamp),
-                  type: entry.type as 'user' | 'avatar',
+                  type: entry.type.toUpperCase() as 'USER' | 'AVATAR',
                   content: entry.transcription || '',
                   isComplete: !entry.isPartial,
                 },
@@ -657,28 +659,22 @@ export default function InteractiveAvatar({
         console.log('Avatar audio stream is ready.');
       });
 
-      // Construct voice configuration conditionally
-      const voiceConfig: any = {
-        rate: 1.5,
-        emotion: VoiceEmotion.EXCITED,
-      };
-
-      if (voiceId) {
-        voiceConfig.voice_id = voiceId; // SDK might expect 'voice_id' (snake_case)
-      }
-
       const sessionInfo = await avatar.current.createStartAvatar({
         quality: AvatarQuality.Low,
         avatarName: avatarId,
         knowledgeBase,
-        voice: voiceConfig, // Use the constructed voice config
+        voice: {
+          rate: 1.5,
+          emotion: VoiceEmotion.EXCITED,
+        },
         language,
         disableIdleTimeout: true,
       });
 
       setData(sessionInfo);
 
-      await avatar.current.startVoiceChat({}); // Removed useSilencePrompt: false
+      await avatar.current.startVoiceChat({ useSilencePrompt: false });
+      await new Promise(r => setTimeout(r, 500));
 
       if (introMessage && introMessage.trim()) {
         console.log('Sending intro message:', introMessage);
@@ -892,12 +888,11 @@ export default function InteractiveAvatar({
                   <Image
                     fill
                     priority
-                    alt={`${AVATARS.find(a => a.avatar_id === avatarId)?.name || AVATARS.find(a => a.avatar_id === defaultAvatarId)?.name} preview`}
+                    alt={`${AVATARS.find(a => a.avatar_id === avatarId)?.name} preview`}
                     className="object-contain"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     src={`/${
-                      AVATARS.find(a => a.avatar_id === avatarId)?.name ||
-                      AVATARS.find(a => a.avatar_id === defaultAvatarId)?.name
+                      AVATARS.find(a => a.avatar_id === avatarId)?.name
                     }_avatar_preview.webp`}
                   />
                 </div>

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.34",
-    "@heygen/streaming-avatar": "^2.0.8",
+    "@heygen/streaming-avatar": "^2.0.13",
     "@nextui-org/button": "^2.0.34",
     "@nextui-org/chip": "^2.0.32",
     "@nextui-org/code": "^2.0.29",
@@ -40,8 +40,9 @@
     "framer-motion": "^11.5.6",
     "intl-messageformat": "^10.5.0",
     "is-number": "^7.0.0",
+    "livekit-client": "^2.11.4",
     "lucide-react": "^0.468.0",
-    "next": "^14.2.4",
+    "next": "^14.2.28",
     "next-themes": "^0.2.1",
     "openai": "^4.52.1",
     "react": "^18.3.1",
@@ -54,7 +55,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "20.5.7",
+    "@types/node": "^18.17.0",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@typescript-eslint/eslint-plugin": "7.2.0",
@@ -71,8 +72,9 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-unused-imports": "^3.2.0",
     "postcss": "8.4.38",
+    "prettier": "^3.0.0",
     "tailwind-variants": "0.1.20",
     "tailwindcss": "3.4.3",
-    "typescript": "5.0.4"
+    "typescript": "^5.3.3"
   }
 }

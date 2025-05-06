@@ -45,7 +45,7 @@ export function saveAudioBlob(blob: Blob, filename: string): Promise<string> {
 
         const filepath = path.join(audioDir, filename);
 
-        fs.writeFileSync(filepath, buffer);
+        fs.writeFileSync(filepath, new Uint8Array(buffer));
         resolve(filepath);
       } catch (error) {
         reject(error);

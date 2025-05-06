@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       );
     }
 
-    fs.writeFileSync(audioPath, buffer);
+    fs.writeFileSync(audioPath, new Uint8Array(buffer));
     console.log("Saved audio file:", {
       path: audioPath,
       size: buffer.length,
