@@ -244,6 +244,40 @@ Troubleshoot and resolve all blocking errors preventing the Next.js app from run
 
 ---
 
+## Railway Docker Deployment & Persistent Transcriptions
+
+### Persistent Storage for `/transcriptions`
+
+**Important:** The `/transcriptions` directory is used to store user session transcription `.txt` files. To ensure these files are NOT lost during Docker image updates or redeploys, you must use Railway's Persistent Volumes feature.
+
+- The `/transcriptions` folder is NOT included in the Docker image (see `.dockerignore`).
+- At runtime, the app expects `/app/transcriptions` to exist and be mapped to a Railway persistent volume.
+- **On Railway:**
+  1. Go to your project > "Storage" tab.
+  2. Add a new Persistent Volume, mount it to `/app/transcriptions`.
+  3. All transcription files will be preserved across deploys and restarts.
+
+#### Example Docker Compose (for local dev):
+```yaml
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - transcriptions-data:/app/transcriptions
+volumes:
+  transcriptions-data:
+```
+
+#### On Railway (production):
+- Configure the persistent volume via the Railway dashboard UI. No code changes needed!
+- **Never store `/transcriptions` in your repo or Docker image.**
+
+### Why?
+- This ensures user data is never lost on redeploys or CI/CD updates.
+- You can safely update your app with zero risk of overwriting transcription history.
+
 ## DeepInfra ASR Integration
 
 User speech is captured using MediaRecorder in the browser. When the user stops speaking, the audio is sent to `/api/transcribe-audio` as a `multipart/form-data` POST request. The backend saves the audio, calls DeepInfra's AutomaticSpeechRecognition API, and returns the transcript in a structured JSON response:
