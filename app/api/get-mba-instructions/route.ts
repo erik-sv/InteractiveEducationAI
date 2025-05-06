@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const instructionsDir = path.join(process.cwd(), 'ai_instructions');
+    const instructionsDir = path.join(process.cwd(), 'app', 'ai_instructions');
     let instructions: { name: string; path: string }[] = [];
 
     try {

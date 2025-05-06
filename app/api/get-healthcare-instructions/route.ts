@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server';
  * Response format: { success, data, error }
  */
 export async function GET() {
-  const instructionsDir = path.join(process.cwd(), 'ai_instructions', 'healthcare');
+  const instructionsDir = path.join(process.cwd(), 'app', 'ai_instructions', 'healthcare');
   let files: string[] = [];
 
   try {
@@ -61,7 +61,7 @@ export async function GET() {
 
         return {
           name: file,
-          path: `/ai_instructions/healthcare/${file}`,
+          path: `/app/ai_instructions/healthcare/${file}`,
           introMessage,
         };
       })

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'No file specified' }, { status: 400 });
     }
 
-    const filePath = path.join(process.cwd(), 'ai_instructions', file);
+    const filePath = path.join(process.cwd(), 'app', 'ai_instructions', file);
 
     if (!fs.existsSync(filePath)) {
       // Optionally use structured logging here for production
