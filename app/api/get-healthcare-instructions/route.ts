@@ -51,18 +51,10 @@ export async function GET() {
 
           if (typeof extractedMessage === 'string' && extractedMessage.trim() !== '') {
             introMessage = extractedMessage;
-            console.log(`Successfully extracted introMessage for ${file}.`);
           } else if (typeof extractedMessage === 'object' && extractedMessage['#text']) {
             introMessage = extractedMessage['#text'];
-            console.log(`Successfully extracted introMessage (from #text) for ${file}.`);
-          } else {
-            console.log(
-              `Using default introMessage for ${file} as no specific message was found or extracted.`
-            );
           }
-        } catch (parseError) {
-          console.error(`Error parsing XML file ${file}:`, parseError);
-        }
+        } catch (parseError) {}
 
         return {
           name: file,
@@ -77,8 +69,6 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error processing healthcare instructions:', error);
-
     return NextResponse.json(
       {
         success: false,

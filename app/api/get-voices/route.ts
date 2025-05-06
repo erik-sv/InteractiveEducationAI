@@ -1,7 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import { NextRequest, NextResponse } from 'next/server';
 import { Console } from 'console';
+
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Voice type structure matching the voice data JSON.
@@ -28,8 +29,17 @@ export async function GET(_req: NextRequest) {
 
   try {
     const filePath = path.resolve(process.cwd(), 'docs', 'heygen-voices.json');
+
     if (!fs.existsSync(filePath)) {
-      log.error(JSON.stringify({ level: 'ERROR', code: 'FILE_NOT_FOUND', msg: 'Voice data file not found', filePath }));
+      log.error(
+        JSON.stringify({
+          level: 'ERROR',
+          code: 'FILE_NOT_FOUND',
+          msg: 'Voice data file not found',
+          filePath,
+        })
+      );
+
       return NextResponse.json(
         {
           success: false,
@@ -44,7 +54,9 @@ export async function GET(_req: NextRequest) {
     }
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const voices: Voice[] = JSON.parse(fileContent);
+
     log.log(JSON.stringify({ level: 'INFO', code: 'VOICES_LOADED', count: voices.length }));
+
     return NextResponse.json(
       {
         success: true,
@@ -56,6 +68,7 @@ export async function GET(_req: NextRequest) {
   } catch (error) {
     let errorMessage = 'An unexpected error occurred.';
     let code = 'INTERNAL_SERVER_ERROR';
+
     if (error instanceof Error) {
       errorMessage = error.message;
     }
@@ -64,6 +77,7 @@ export async function GET(_req: NextRequest) {
       code = 'JSON_PARSE_ERROR';
     }
     log.error(JSON.stringify({ level: 'ERROR', code, msg: errorMessage }));
+
     return NextResponse.json(
       {
         success: false,

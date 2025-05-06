@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect } from 'react';
@@ -13,6 +14,7 @@ export default function GoogleAnalytics() {
   useEffect(() => {
     // Load the gtag script
     const gtagScript = document.createElement('script');
+
     gtagScript.async = true;
     gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-6T3LWSS5S6';
     document.head.appendChild(gtagScript);
@@ -21,7 +23,6 @@ export default function GoogleAnalytics() {
     window.dataLayer = window.dataLayer || [];
     function gtag(...args: any[]) {
       window.dataLayer.push(arguments);
-      // console.log('GA Event:', args); // Debug log
     }
     window.gtag = gtag;
 

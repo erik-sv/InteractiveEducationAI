@@ -1,28 +1,28 @@
 export const AVATARS = [
   {
-    avatar_id: "Dexter_Lawyer_Sitting_public",
-    name: "Alex",
-    voice_id: "placeholder_voice_alex",
+    avatar_id: 'Dexter_Lawyer_Sitting_public',
+    name: 'Alex',
+    voice_id: 'placeholder_voice_alex',
   },
   {
-    avatar_id: "Ann_Therapist_public",
-    name: "Ann",
-    voice_id: "placeholder_voice_ann",
+    avatar_id: 'Ann_Therapist_public',
+    name: 'Ann',
+    voice_id: 'placeholder_voice_ann',
   },
   {
-    avatar_id: "Bryan_IT_Sitting_public",
-    name: "Bryan",
-    voice_id: "placeholder_voice_bryan",
+    avatar_id: 'Bryan_IT_Sitting_public',
+    name: 'Bryan',
+    voice_id: 'placeholder_voice_bryan',
   },
   {
-    avatar_id: "Judy_Teacher_Sitting2_public",
-    name: "Judy",
-    voice_id: "placeholder_voice_judy",
+    avatar_id: 'Judy_Teacher_Sitting2_public',
+    name: 'Judy',
+    voice_id: 'placeholder_voice_judy',
   },
   {
-    avatar_id: "Katya_Chair_Sitting_public",
-    name: "Katya",
-    voice_id: "7194df66c861492fb6cc379e99905e22",
+    avatar_id: 'Katya_Chair_Sitting_public',
+    name: 'Katya',
+    voice_id: '7194df66c861492fb6cc379e99905e22',
   },
 ];
 

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* Relative Path: /components/InteractiveAvatar.tsx */
-/* eslint-disable no-console */
 'use client';
 
 /**
@@ -143,7 +143,6 @@ export default function InteractiveAvatar({
 
     inactivityTimeout.current = setTimeout(
       () => {
-        console.log('Session ended due to inactivity');
         endSession();
       },
       3 * 60 * 1000
@@ -155,7 +154,6 @@ export default function InteractiveAvatar({
   }, [lastActivity]);
 
   const handleActivity = useCallback(() => {
-    console.log('Speech activity detected, resetting timer');
     setLastActivity(Date.now());
   }, []);
 
@@ -166,8 +164,6 @@ export default function InteractiveAvatar({
       const fileName = sessionFilenameRef.current;
 
       if (!fileName) return;
-
-      console.log('[DEBUG] About to save transcription. Current array:', arr);
 
       try {
         const response = await fetch('/api/save-transcription', {
@@ -182,11 +178,8 @@ export default function InteractiveAvatar({
         });
 
         if (!response.ok) {
-          console.error('Failed to save transcription:', await response.text());
         }
-      } catch (error) {
-        console.error('Error saving transcription:', error);
-      }
+      } catch (error) {}
     }, 200)
   ).current;
 
@@ -257,8 +250,6 @@ export default function InteractiveAvatar({
   const handleUserTranscription = useCallback(
     async (audioBlob: Blob) => {
       if (!isSessionActiveRef.current || !streamIdRef.current) {
-        console.warn('Skipping user transcription; session not active or no streamId');
-
         return;
       }
 
@@ -275,14 +266,10 @@ export default function InteractiveAvatar({
         });
 
         if (!response.ok) {
-          console.error('Transcription API error:', await response.text());
-
           return;
         }
 
         const { transcription: text } = await response.json();
-
-        console.log('Transcription successful (User):', text);
 
         // Add a new transcription entry for the user
         setAndSaveTranscription(prev => {
@@ -322,9 +309,7 @@ export default function InteractiveAvatar({
           // Return updated transcription array with new entry
           return [...prev, newTranscription];
         });
-      } catch (err) {
-        console.error('Error in user transcription:', err);
-      }
+      } catch (err) {}
     },
     [setAndSaveTranscription]
   );
@@ -332,8 +317,6 @@ export default function InteractiveAvatar({
   // Setup user mic recorder
   const startContinuousUserRecording = useCallback(() => {
     if (!isSessionActiveRef.current || !userMediaRef.current) {
-      console.warn('Skipping user mic record; session inactive or no user media');
-
       return;
     }
 
@@ -355,7 +338,6 @@ export default function InteractiveAvatar({
       const audioBlob = new Blob(audioChunks, { type: mediaRecorderMimeType });
 
       audioChunks = [];
-      console.log(`Processing user audio of size: ${audioBlob.size}`);
       await handleUserTranscription(audioBlob);
 
       if (isSessionActiveRef.current) {
@@ -370,16 +352,13 @@ export default function InteractiveAvatar({
   const stopRecording = useCallback((type: 'user', stopTimestamp?: string) => {
     if (type === 'user') {
       if (userMediaRecorderRef.current?.state === 'recording') {
-        console.log('Stopping user recording');
         try {
           // Store timestamp in ref for use in handleUserTranscription
           if (stopTimestamp) {
             userStopTimestampRef.current = stopTimestamp;
           }
           userMediaRecorderRef.current.stop();
-        } catch (err) {
-          console.error('Error stopping user recorder:', err);
-        }
+        } catch (err) {}
       }
     }
   }, []);
@@ -396,8 +375,6 @@ export default function InteractiveAvatar({
 
       // Merge them so far
       const mergedSoFar = avatarPartialBufferRef.current.join('');
-
-      console.log('[Avatar partial transcript => buffer merge]:', JSON.stringify(mergedSoFar));
 
       // Find our single partial line
       setAndSaveTranscription(prev => {
@@ -424,8 +401,6 @@ export default function InteractiveAvatar({
 
     avatarPartialBufferRef.current = []; // clear
 
-    console.log('Avatar stopped => final text is:', JSON.stringify(finalText));
-
     // finalize partial => final
     setAndSaveTranscription(prev => {
       const partialIdx = prev.findIndex(e => e.type === 'avatar' && e.isPartial);
@@ -449,7 +424,6 @@ export default function InteractiveAvatar({
   const handleAvatarStartTalking = useCallback(() => {
     if (!isSessionActiveRef.current) return;
 
-    console.log('Avatar started talking => create new partial line');
     // Insert a single partial line
     setAndSaveTranscription(prev => [
       ...prev,
@@ -469,7 +443,6 @@ export default function InteractiveAvatar({
 
     const onUserStart = () => {
       if (!isSessionActiveRef.current) return;
-      console.log('>>>>> User started talking');
       setAndSaveTranscription(prev => [
         ...prev,
         { timestamp: getPSTTimestamp(), type: 'user', content: 'Started speaking' },
@@ -479,7 +452,6 @@ export default function InteractiveAvatar({
 
     const onUserStop = () => {
       if (!isSessionActiveRef.current) return;
-      console.log('>>>>> User stopped talking');
       const stopTimestamp = getPSTTimestamp(); // Store timestamp when user stops
 
       stopRecording('user', stopTimestamp); // Pass timestamp to stopRecording
@@ -586,9 +558,7 @@ export default function InteractiveAvatar({
           });
         }
       });
-    } catch (error) {
-      console.error('Error saving transcription:', error);
-    }
+    } catch (error) {}
   };
 
   async function fetchAccessToken() {
@@ -598,8 +568,6 @@ export default function InteractiveAvatar({
 
       return token;
     } catch (error) {
-      console.error('Error fetching access token:', error);
-
       return '';
     }
   }
@@ -627,15 +595,12 @@ export default function InteractiveAvatar({
       avatar.current = new StreamingAvatar({ token });
 
       avatar.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
-        console.log('Stream disconnected');
         stopRecording('user');
         endSession();
       });
 
       avatar.current.on(StreamingEvents.STREAM_READY, evt => {
         if (!isSessionActiveRef.current) return;
-        console.log('>>>>> Stream ready:', evt.detail);
-
         setStream(evt.detail);
         streamIdRef.current = evt.detail.id;
         setStreamId(evt.detail.id);
@@ -645,16 +610,14 @@ export default function InteractiveAvatar({
           const name = buildDateTimeFilename(evt.detail.id);
 
           sessionFilenameRef.current = name;
-          console.log('Session file name set to:', name);
         }
 
         if (mediaStream.current) {
           mediaStream.current.srcObject = evt.detail;
           mediaStream.current.onloadedmetadata = () => {
-            mediaStream.current?.play().catch(err => console.error(err));
+            mediaStream.current?.play().catch(err => {});
           };
         }
-        console.log('Avatar audio stream is ready.');
       });
 
       // Construct voice configuration conditionally
@@ -681,19 +644,15 @@ export default function InteractiveAvatar({
       await avatar.current.startVoiceChat({}); // Removed useSilencePrompt: false
 
       if (introMessage && introMessage.trim()) {
-        console.log('Sending intro message:', introMessage);
         try {
           await avatar.current.speak({
             text: introMessage,
             taskType: TaskType.REPEAT,
             taskMode: TaskMode.SYNC,
           });
-        } catch (e) {
-          console.error('Error sending intro message:', e);
-        }
+        } catch (e) {}
       }
     } catch (error) {
-      console.error('Error starting session:', error);
       setDebug(error instanceof Error ? error.message : 'Unknown error');
       setIsSessionActive(false);
       isSessionActiveRef.current = false;
@@ -726,11 +685,9 @@ export default function InteractiveAvatar({
 
   async function endSession() {
     if (!isSessionActiveRef.current) {
-      console.log('Session already inactive; ignoring endSession.');
-
       return;
     }
-    console.log('Ending session...');
+
     setIsSessionActive(false);
     isSessionActiveRef.current = false;
 
@@ -805,7 +762,7 @@ export default function InteractiveAvatar({
     if (stream && mediaStream.current) {
       mediaStream.current.srcObject = stream;
       mediaStream.current.onloadedmetadata = () => {
-        mediaStream.current?.play().catch(err => console.error(err));
+        mediaStream.current?.play().catch(err => {});
         setDebug('Playing');
       };
     }

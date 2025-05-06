@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    container_name: interactive-education-web
+    expose:
+      - 3000
+    environment:
+      - NODE_ENV=production
+    restart: always
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: interactive-education-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web
+    restart: always

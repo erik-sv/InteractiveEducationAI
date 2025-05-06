@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import StreamingAvatar, { VoiceEmotion } from '@heygen/streaming-avatar';
 import { useCallback, useRef, useState } from 'react';
-import type { StreamingAvatar, VoiceEmotion } from '@heygen/streaming-avatar';
 
 /**
  * Custom React hook for managing avatar session state, events, and audio logic.
@@ -48,7 +49,7 @@ export function useAvatarSession({
 
   // Mic controls
   const toggleMic = useCallback(() => {
-    setIsMicMuted((prev) => !prev);
+    setIsMicMuted(prev => !prev);
     // TODO: Add logic to start/stop recording
   }, []);
 
@@ -64,10 +65,13 @@ export function useAvatarSession({
   }, []);
 
   // Transcript handler
-  const addTranscriptionEntry = useCallback((entry: any) => {
-    transcriptionRef.current.push(entry);
-    onTranscription(entry);
-  }, [onTranscription]);
+  const addTranscriptionEntry = useCallback(
+    (entry: any) => {
+      transcriptionRef.current.push(entry);
+      onTranscription(entry);
+    },
+    [onTranscription]
+  );
 
   return {
     // State

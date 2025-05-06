@@ -19,8 +19,6 @@ export async function GET() {
       introMessage,
     });
   } catch (error) {
-    console.error('Error reading photography knowledge base:', error);
-
     return NextResponse.json(
       {
         success: false,

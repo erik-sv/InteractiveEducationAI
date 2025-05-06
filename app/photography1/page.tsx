@@ -1,22 +1,20 @@
-/* eslint-disable no-console */
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { useEffect, useState } from 'react';
+import { Button } from '@nextui-org/button';
 
-import InteractiveAvatar from "@/components/InteractiveAvatar";
-import { AVATARS } from "@/app/lib/constants";
+import InteractiveAvatar from '@/components/InteractiveAvatar';
 
 export default function Photography1() {
-  const [knowledgeBase, setKnowledgeBase] = useState<string>("");
+  const [knowledgeBase, setKnowledgeBase] = useState<string>('');
   // const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].avatar_id);
-  const [selectedAvatar] = useState("Ann_Therapist_public");
-  const [introMessage, setIntroMessage] = useState<string>("");
+  const [selectedAvatar] = useState('Ann_Therapist_public');
+  const [introMessage, setIntroMessage] = useState<string>('');
 
   useEffect(() => {
     const loadKnowledgeBase = async () => {
       try {
-        const response = await fetch("/api/get-photography1-knowledge-base");
+        const response = await fetch('/api/get-photography1-knowledge-base');
         const data = await response.json();
 
         if (data.knowledgeBase) {
@@ -24,36 +22,23 @@ export default function Photography1() {
 
           // Extract intro message from XML structure
           const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(data.knowledgeBase, "text/xml");
-          const introMessageElement = xmlDoc.querySelector("intro_message");
+          const xmlDoc = parser.parseFromString(data.knowledgeBase, 'text/xml');
+          const introMessageElement = xmlDoc.querySelector('intro_message');
 
           if (introMessageElement) {
-            setIntroMessage(introMessageElement.textContent || "");
-            if (process.env.NODE_ENV === "development") {
-              console.log(
-                "Extracted intro message:",
-                introMessageElement.textContent,
-              );
-            }
+            setIntroMessage(introMessageElement.textContent || '');
           } else {
-            if (process.env.NODE_ENV === "development") {
-              console.error("No intro_message tag found in XML.");
-            }
-            setIntroMessage(
-              "Welcome! Please wait while we load your personalized experience.",
-            );
+            setIntroMessage('Welcome! Please wait while we load your personalized experience.');
           }
         }
-      } catch (error) {
-        console.error("Error loading knowledge base:", error);
-      }
+      } catch (error) {}
     };
 
     loadKnowledgeBase();
   }, []);
 
   const handleDonate = () => {
-    window.open("https://donate.stripe.com/dR6eXK3mXdF70A83cc", "_blank");
+    window.open('https://donate.stripe.com/dR6eXK3mXdF70A83cc', '_blank');
   };
 
   return (
@@ -100,7 +85,7 @@ export default function Photography1() {
               knowledgeBase={knowledgeBase}
             />
           </div>
-          {/* <div className="flex justify-center pt-4">
+          <div className="flex justify-center pt-4">
             <Button
               className="btn-primary text-lg px-8 py-6 rounded-lg"
               size="lg"
@@ -108,7 +93,7 @@ export default function Photography1() {
             >
               Donate
             </Button>
-          </div> */}
+          </div>
         </div>
       </main>
     </div>

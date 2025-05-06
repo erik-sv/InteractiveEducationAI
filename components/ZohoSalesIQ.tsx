@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Script from "next/script";
+import Script from 'next/script';
 
-import styles from "../styles/zoho.module.css";
+import styles from '../styles/zoho.module.css';
 
 export default function ZohoSalesIQ() {
   return (

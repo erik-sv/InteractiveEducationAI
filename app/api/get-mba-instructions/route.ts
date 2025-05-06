@@ -23,8 +23,6 @@ export async function GET() {
 
     return NextResponse.json({ instructions: files });
   } catch (error) {
-    console.error('Error reading instructions directory:', error);
-
     return NextResponse.json({ error: 'Failed to read instructions' }, { status: 500 });
   }
 }

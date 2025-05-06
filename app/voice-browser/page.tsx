@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useState, useEffect, useMemo } from 'react';
+
 import FilterControls from './FilterControls';
 import VoiceCard from './VoiceCard';
 
@@ -38,12 +39,7 @@ interface ApiResponse {
  */
 function extractVoices(data: unknown): Voice[] {
   // Case 1: Standard { voices: [...] }
-  if (
-    data &&
-    typeof data === 'object' &&
-    'voices' in data &&
-    Array.isArray((data as any).voices)
-  ) {
+  if (data && typeof data === 'object' && 'voices' in data && Array.isArray((data as any).voices)) {
     return (data as any).voices;
   }
 
@@ -86,14 +82,17 @@ export default function VoiceBrowserPage() {
       setError(null);
       try {
         const response = await fetch('/api/get-voices');
+
         if (!response.ok) {
           throw new Error('Failed to fetch voices');
         }
         const json: ApiResponse = await response.json();
+
         if (!json.success || !json.data) {
           throw new Error(json.error?.message || 'Invalid API response');
         }
         const extractedVoices = extractVoices(json.data);
+
         if (!Array.isArray(extractedVoices) || extractedVoices.length === 0) {
           throw new Error('No voices found in API response.');
         }
@@ -130,6 +129,7 @@ export default function VoiceBrowserPage() {
         streamingFilter === '' ||
         (streamingFilter === 'yes' && voice.support_interactive_avatar) ||
         (streamingFilter === 'no' && !voice.support_interactive_avatar);
+
       return languageMatch && genderMatch && nameMatch && emotionMatch && streamingMatch;
     });
   }, [voices, languageFilter, genderFilter, nameFilter, emotionFilter, streamingFilter]);
@@ -153,7 +153,7 @@ export default function VoiceBrowserPage() {
       />
 
       {loading && (
-        <div className="text-center mt-8" role="status" aria-live="polite">
+        <div aria-live="polite" className="text-center mt-8" role="status">
           Loading voices...
         </div>
       )}
@@ -168,10 +168,10 @@ export default function VoiceBrowserPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
           {filteredVoices.length > 0 ? (
             filteredVoices.map(voice => (
-              <VoiceCard cardKey={voice.voice_id} voice={voice} />
+              <VoiceCard key={voice.voice_id} cardKey={voice.voice_id} voice={voice} />
             ))
           ) : (
-            <div className="col-span-full text-center text-gray-400" aria-live="polite">
+            <div aria-live="polite" className="col-span-full text-center text-gray-400">
               No voices match the current filters.
             </div>
           )}

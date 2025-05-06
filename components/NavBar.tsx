@@ -1,7 +1,6 @@
-"use client";
+'use client';
 
 import {
-  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -13,14 +12,14 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Button
-} from "@nextui-org/react";
-import { usePathname } from "next/navigation";
-import NextLink from "next/link";
-import Image from "next/image";
-import { ChevronDown } from "lucide-react";
-import FeedbackModal from "@/components/FeedbackModal";
-import { ThemeSwitch } from "@/components/ThemeSwitch";
+  Button,
+} from '@nextui-org/react';
+import { usePathname } from 'next/navigation';
+import NextLink from 'next/link';
+import Image from 'next/image';
+import { ChevronDown } from 'lucide-react';
+
+import FeedbackModal from '@/components/FeedbackModal';
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -28,23 +27,20 @@ export default function NavBar() {
   return (
     <Navbar className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800">
       <NavbarBrand>
-        <NextLink href="/" className="flex items-center gap-4">
+        <NextLink className="flex items-center gap-4" href="/">
           <Image
-            src="/LogoHorizontal WEB White.png"
-            alt="AI Education Platform"
-            width={200}
-            height={40}
             priority
+            alt="AI Education Platform"
             className="h-8 w-auto"
+            height={40}
+            src="/LogoHorizontal WEB White.png"
+            width={200}
           />
         </NextLink>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem isActive={pathname === "/"}>
-          <NextLink 
-            href="/" 
-            className={`text-${pathname === "/" ? "primary" : "foreground"}`}
-          >
+        <NavbarItem isActive={pathname === '/'}>
+          <NextLink className={`text-${pathname === '/' ? 'primary' : 'foreground'}`} href="/">
             Home
           </NextLink>
         </NavbarItem>
@@ -65,28 +61,16 @@ export default function NavBar() {
               aria-label="Example pages"
               className="w-[200px]"
               itemClasses={{
-                base: "gap-4",
+                base: 'gap-4',
               }}
             >
-              <DropdownItem 
-                key="photography1"
-                textValue="Photography 1"
-              >
-                <NextLink 
-                  href="/photography1" 
-                  className="w-full"
-                >
+              <DropdownItem key="photography1" textValue="Photography 1">
+                <NextLink className="w-full" href="/photography1">
                   Photography 1
                 </NextLink>
               </DropdownItem>
-              <DropdownItem 
-                key="mba"
-                textValue="MBA Tutor"
-              >
-                <NextLink 
-                  href="/mba" 
-                  className="w-full"
-                >
+              <DropdownItem key="mba" textValue="MBA Tutor">
+                <NextLink className="w-full" href="/mba">
                   MBA Tutor
                 </NextLink>
               </DropdownItem>
@@ -102,25 +86,25 @@ export default function NavBar() {
       </NavbarContent>
       <NavbarMenu className="bg-gray-900/95 backdrop-blur-md pt-6">
         <NavbarMenuItem>
-          <NextLink 
-            href="/" 
-            className={`w-full ${pathname === "/" ? "text-primary" : "text-foreground"}`}
+          <NextLink
+            className={`w-full ${pathname === '/' ? 'text-primary' : 'text-foreground'}`}
+            href="/"
           >
             Home
           </NextLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <NextLink 
-            href="/photography1" 
-            className={`w-full ${pathname === "/photography1" ? "text-primary" : "text-foreground"}`}
+          <NextLink
+            className={`w-full ${pathname === '/photography1' ? 'text-primary' : 'text-foreground'}`}
+            href="/photography1"
           >
             Photography 1
           </NextLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <NextLink 
-            href="/mba" 
-            className={`w-full ${pathname === "/mba" ? "text-primary" : "text-foreground"}`}
+          <NextLink
+            className={`w-full ${pathname === '/mba' ? 'text-primary' : 'text-foreground'}`}
+            href="/mba"
           >
             MBA Tutor
           </NextLink>

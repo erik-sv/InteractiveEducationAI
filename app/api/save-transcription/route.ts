@@ -58,8 +58,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, filePath });
   } catch (error) {
-    console.error('Error saving transcription:', error);
-
     return NextResponse.json({ error: 'Failed to save transcription' }, { status: 500 });
   }
 }

@@ -53,7 +53,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       onChange={(e: ChangeEvent<HTMLSelectElement>) => setLanguageFilter(e.target.value)}
     >
       <option value="">All Languages</option>
-      {languages.map((lang) => (
+      {languages.map(lang => (
         <option key={lang} value={lang}>
           {lang}
         </option>
@@ -74,8 +74,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     <input
       aria-label="Name filter"
       className="bg-gray-700 border border-gray-600 rounded p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-      type="text"
       placeholder="Search by name..."
+      type="text"
       value={nameFilter}
       onChange={(e: ChangeEvent<HTMLInputElement>) => setNameFilter(e.target.value)}
     />

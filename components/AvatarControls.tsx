@@ -41,39 +41,41 @@ const AvatarControls: React.FC<AvatarControlsProps> = ({
     <div className={`flex gap-4 items-center ${className || ''}`.trim()}>
       {/* Session Control */}
       <button
-        className={`px-4 py-2 rounded font-semibold transition-colors ${isSessionActive ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white`}
-        onClick={isSessionActive ? () => onEndSession('user') : onStartSession}
-        aria-label={isSessionActive ? 'End Session' : 'Start Session'}
         aria-disabled={isLoadingSession}
+        aria-label={isSessionActive ? 'End Session' : 'Start Session'}
+        className={`px-4 py-2 rounded font-semibold transition-colors ${isSessionActive ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white`}
         disabled={isLoadingSession}
         tabIndex={0}
+        onClick={isSessionActive ? () => onEndSession('user') : onStartSession}
       >
         {isSessionActive ? 'End Session' : isLoadingSession ? 'Starting...' : 'Start Session'}
       </button>
 
       {/* Mic Toggle */}
       <button
-        className="px-3 py-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
-        onClick={onToggleMic}
+        aria-disabled={!isSessionActive}
         aria-label={isMicMuted ? 'Unmute Microphone' : 'Mute Microphone'}
         aria-pressed={isMicMuted}
+        className="px-3 py-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
         disabled={!isSessionActive}
-        aria-disabled={!isSessionActive}
         tabIndex={0}
+        onClick={onToggleMic}
       >
         {isMicMuted ? 'Unmute Mic' : 'Mute Mic'}
       </button>
 
       {/* Language Select */}
-      <label htmlFor="avatar-language-select" className="sr-only">Language</label>
+      <label className="sr-only" htmlFor="avatar-language-select">
+        Language
+      </label>
       <select
+        aria-disabled={isSessionActive}
+        aria-label="Select Language"
+        disabled={isSessionActive}
         id="avatar-language-select"
+        tabIndex={0}
         value={selectedLanguage}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onLanguageChange(e.target.value)}
-        disabled={isSessionActive}
-        aria-label="Select Language"
-        aria-disabled={isSessionActive}
-        tabIndex={0}
       >
         {availableLanguages.map(lang => (
           <option key={lang.value} value={lang.value}>
@@ -83,15 +85,17 @@ const AvatarControls: React.FC<AvatarControlsProps> = ({
       </select>
 
       {/* Voice Select */}
-      <label htmlFor="avatar-voice-select" className="sr-only">Voice</label>
+      <label className="sr-only" htmlFor="avatar-voice-select">
+        Voice
+      </label>
       <select
+        aria-disabled={isSessionActive}
+        aria-label="Select Voice"
+        disabled={isSessionActive}
         id="avatar-voice-select"
+        tabIndex={0}
         value={selectedVoice}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onVoiceChange(e.target.value)}
-        disabled={isSessionActive}
-        aria-label="Select Voice"
-        aria-disabled={isSessionActive}
-        tabIndex={0}
       >
         {availableVoices.map(voice => (
           <option key={voice.value} value={voice.value}>
@@ -104,14 +108,18 @@ const AvatarControls: React.FC<AvatarControlsProps> = ({
 };
 
 AvatarControls.propTypes = {
-  availableLanguages: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
-  availableVoices: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-  })).isRequired,
+  availableLanguages: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  availableVoices: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
   className: PropTypes.string,
   isLoadingSession: PropTypes.bool.isRequired,
   isMicMuted: PropTypes.bool.isRequired,

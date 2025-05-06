@@ -246,37 +246,76 @@ Troubleshoot and resolve all blocking errors preventing the Next.js app from run
 
 ## Railway Docker Deployment & Persistent Transcriptions
 
-### Persistent Storage for `/transcriptions`
+### Overview
+This project uses Docker Compose to orchestrate a Next.js app and an Nginx reverse proxy for subdomain routing. Cloudflare provides SSL for all subdomains, so all internal traffic is HTTP-only.
 
-**Important:** The `/transcriptions` directory is used to store user session transcription `.txt` files. To ensure these files are NOT lost during Docker image updates or redeploys, you must use Railway's Persistent Volumes feature.
+### Architecture
+| Layer        | Protocol | SSL Cert Needed? | Notes                                             |
+|--------------|----------|------------------|---------------------------------------------------|
+| Cloudflare   | HTTPS    | Yes (managed)    | Covers all subdomains, user-facing SSL            |
+| Nginx/Docker | HTTP     | No               | Proxies subdomains to app, no certs needed        |
+| App (Next.js)| HTTP     | No               | Listens on 3000, receives proxied traffic         |
 
-- The `/transcriptions` folder is NOT included in the Docker image (see `.dockerignore`).
-- At runtime, the app expects `/app/transcriptions` to exist and be mapped to a Railway persistent volume.
-- **On Railway:**
-  1. Go to your project > "Storage" tab.
-  2. Add a new Persistent Volume, mount it to `/app/transcriptions`.
-  3. All transcription files will be preserved across deploys and restarts.
+### Subdomain Routing
+- `demos.advantageintegrationai.com/` → main page (`/`)
+- `education.advantageintegrationai.com/` → `/education`
+- `healthcare.advantageintegrationai.com/` → `/healthcare`
 
-#### Example Docker Compose (for local dev):
-```yaml
-services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    volumes:
-      - transcriptions-data:/app/transcriptions
-volumes:
-  transcriptions-data:
+### Key Files
+- `docker-compose.yml`: Orchestrates `web` (Next.js) and `nginx` services.
+- `nginx/nginx.conf`: Nginx configuration for subdomain routing.
+
+### Setup Steps
+1. Ensure Cloudflare proxy is enabled for all subdomains (SSL handled at edge).
+2. Deploy to Railway using the provided `docker-compose.yml` and `nginx/nginx.conf`.
+3. Only expose port 80 (HTTP) from Nginx; do **not** configure SSL in Docker/Nginx.
+4. Point DNS for all subdomains to your Railway app via Cloudflare.
+
+### Example Nginx Config (see `nginx/nginx.conf`)
+```nginx
+server {
+    listen 80;
+    server_name demos.advantageintegrationai.com;
+    location / {
+        proxy_pass http://web:3000;
+        ...
+    }
+}
+# ...other subdomains...
 ```
 
-#### On Railway (production):
-- Configure the persistent volume via the Railway dashboard UI. No code changes needed!
-- **Never store `/transcriptions` in your repo or Docker image.**
+### Notes
+- If you disable Cloudflare proxy, you must add SSL termination to Nginx.
+- For local testing, you can run `docker-compose up` and access via `localhost`.
 
-### Why?
-- This ensures user data is never lost on redeploys or CI/CD updates.
-- You can safely update your app with zero risk of overwriting transcription history.
+---
+
+## 🧪 Local Subdomain Simulation
+
+To test subdomain routing locally with Docker Compose and Nginx:
+
+1. **Edit your hosts file:**
+   - On Windows: `C:\Windows\System32\drivers\etc\hosts`
+   - On Mac/Linux: `/etc/hosts`
+   - Add:
+     ```
+     127.0.0.1   demos.localtest.me
+     127.0.0.1   education.localtest.me
+     127.0.0.1   healthcare.localtest.me
+     ```
+2. **Ensure Nginx config includes these local domains** (see `nginx/nginx.conf`).
+3. **Run locally:**
+   ```sh
+   docker-compose up --build
+   ```
+4. **Test in your browser:**
+   - http://demos.localtest.me
+   - http://education.localtest.me
+   - http://healthcare.localtest.me
+
+Each subdomain should route to the correct section of your app.
+
+---
 
 ## DeepInfra ASR Integration
 
@@ -390,3 +429,49 @@ See full PRD in `docs/` for more details.
 - Add more healthcare instruction XMLs as needed
 - Expand test coverage
 - Continue accessibility and UX improvements
+
+---
+
+## 🚀 Docker Compose + Nginx Deployment (Railway/Cloudflare)
+
+### Overview
+This project uses Docker Compose to orchestrate a Next.js app and an Nginx reverse proxy for subdomain routing. Cloudflare provides SSL for all subdomains, so all internal traffic is HTTP-only.
+
+### Architecture
+| Layer        | Protocol | SSL Cert Needed? | Notes                                             |
+|--------------|----------|------------------|---------------------------------------------------|
+| Cloudflare   | HTTPS    | Yes (managed)    | Covers all subdomains, user-facing SSL            |
+| Nginx/Docker | HTTP     | No               | Proxies subdomains to app, no certs needed        |
+| App (Next.js)| HTTP     | No               | Listens on 3000, receives proxied traffic         |
+
+### Subdomain Routing
+- `demos.advantageintegrationai.com/` → main page (`/`)
+- `education.advantageintegrationai.com/` → `/education`
+- `healthcare.advantageintegrationai.com/` → `/healthcare`
+
+### Key Files
+- `docker-compose.yml`: Orchestrates `web` (Next.js) and `nginx` services.
+- `nginx/nginx.conf`: Nginx configuration for subdomain routing.
+
+### Setup Steps
+1. Ensure Cloudflare proxy is enabled for all subdomains (SSL handled at edge).
+2. Deploy to Railway using the provided `docker-compose.yml` and `nginx/nginx.conf`.
+3. Only expose port 80 (HTTP) from Nginx; do **not** configure SSL in Docker/Nginx.
+4. Point DNS for all subdomains to your Railway app via Cloudflare.
+
+### Example Nginx Config (see `nginx/nginx.conf`)
+```nginx
+server {
+    listen 80;
+    server_name demos.advantageintegrationai.com;
+    location / {
+        proxy_pass http://web:3000;
+        ...
+    }
+}
+# ...other subdomains...
+```
+
+### Notes
+- If you disable Cloudflare proxy, you must add SSL termination to Nginx.
+- For local testing, you can run `docker-compose up` and access via `localhost`.
