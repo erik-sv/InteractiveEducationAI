@@ -49,20 +49,20 @@ export default function NavBar() {
             <DropdownTrigger>
               <Button
                 disableRipple
+                aria-expanded="false"
+                aria-haspopup="listbox"
                 className="p-0 bg-transparent data-[hover=true]:bg-transparent"
                 endContent={<ChevronDown className="text-small" />}
                 radius="sm"
                 variant="light"
               >
-                Examples
+                Education
               </Button>
             </DropdownTrigger>
             <DropdownMenu
-              aria-label="Example pages"
+              aria-label="Education pages"
               className="w-[200px]"
-              itemClasses={{
-                base: 'gap-4',
-              }}
+              itemClasses={{ base: 'gap-4' }}
             >
               <DropdownItem key="photography1" textValue="Photography 1">
                 <NextLink className="w-full" href="/photography1">
@@ -76,6 +76,14 @@ export default function NavBar() {
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
+        </NavbarItem>
+        <NavbarItem isActive={pathname === '/healthcare'}>
+          <NextLink
+            className={`text-${pathname === '/healthcare' ? 'primary' : 'foreground'}`}
+            href="/healthcare"
+          >
+            Healthcare
+          </NextLink>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
@@ -94,19 +102,44 @@ export default function NavBar() {
           </NextLink>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <NextLink
-            className={`w-full ${pathname === '/photography1' ? 'text-primary' : 'text-foreground'}`}
-            href="/photography1"
-          >
-            Photography 1
-          </NextLink>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                disableRipple
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                className="p-0 bg-transparent data-[hover=true]:bg-transparent w-full text-left"
+                endContent={<ChevronDown className="text-small" />}
+                radius="sm"
+                variant="light"
+              >
+                Education
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Education pages"
+              className="w-[200px]"
+              itemClasses={{ base: 'gap-4' }}
+            >
+              <DropdownItem key="photography1" textValue="Photography 1">
+                <NextLink className="w-full" href="/photography1">
+                  Photography 1
+                </NextLink>
+              </DropdownItem>
+              <DropdownItem key="mba" textValue="MBA Tutor">
+                <NextLink className="w-full" href="/mba">
+                  MBA Tutor
+                </NextLink>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarMenuItem>
         <NavbarMenuItem>
           <NextLink
-            className={`w-full ${pathname === '/mba' ? 'text-primary' : 'text-foreground'}`}
-            href="/mba"
+            className={`w-full ${pathname === '/healthcare' ? 'text-primary' : 'text-foreground'}`}
+            href="/healthcare"
           >
-            MBA Tutor
+            Healthcare
           </NextLink>
         </NavbarMenuItem>
       </NavbarMenu>

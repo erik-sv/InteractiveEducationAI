@@ -5,23 +5,28 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const instructionsDir = path.join(process.cwd(), 'app/ai_instructions');
+    const instructionsDir = path.join(process.cwd(), 'ai_instructions');
+    let instructions: { name: string; path: string }[] = [];
 
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(instructionsDir)) {
-      fs.mkdirSync(instructionsDir, { recursive: true });
+    try {
+      if (!fs.existsSync(instructionsDir)) {
+        // logger.error({ event: 'dir_not_found', instructionsDir });
+        fs.mkdirSync(instructionsDir, { recursive: true });
+      }
+
+      instructions = fs
+        .readdirSync(instructionsDir)
+        .filter(file => file.endsWith('.xml'))
+        .map(file => ({
+          name: file,
+          path: path.join(instructionsDir, file),
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      return NextResponse.json({ instructions });
+    } catch (error) {
+      return NextResponse.json({ error: 'Failed to read instructions' }, { status: 500 });
     }
-
-    const files = fs
-      .readdirSync(instructionsDir)
-      .filter(file => file.endsWith('.xml'))
-      .map(file => ({
-        name: file,
-        path: path.join(instructionsDir, file),
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    return NextResponse.json({ instructions: files });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to read instructions' }, { status: 500 });
   }

@@ -11,19 +11,22 @@ import { NextResponse } from 'next/server';
  * Response format: { success, data, error }
  */
 export async function GET() {
-  const instructionsDir = path.join(process.cwd(), 'app', 'ai_instructions', 'healthcare');
+  const instructionsDir = path.join(process.cwd(), 'ai_instructions', 'healthcare');
   let files: string[] = [];
 
   try {
     files = fs.readdirSync(instructionsDir).filter(file => file.endsWith('.xml'));
   } catch (err) {
+    // Optionally use structured logging here for production
+    // logger.error({ event: 'dir_not_found', instructionsDir, err });
+
     return NextResponse.json(
       {
         success: false,
         data: null,
         error: {
           code: 'DIR_NOT_FOUND',
-          message: 'Healthcare instructions directory not found.',
+          message: `Instructions directory not found: ${instructionsDir}`,
           details: err,
         },
       },
@@ -58,7 +61,7 @@ export async function GET() {
 
         return {
           name: file,
-          path: `/app/ai_instructions/healthcare/${file}`,
+          path: `/ai_instructions/healthcare/${file}`,
           introMessage,
         };
       })

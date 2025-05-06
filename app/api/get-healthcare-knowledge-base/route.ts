@@ -28,26 +28,20 @@ export async function GET(req: Request) {
     );
   }
 
-  const xmlFilePath = path.join(process.cwd(), 'app', 'ai_instructions', 'healthcare', file);
+  const xmlFilePath = path.join(process.cwd(), 'ai_instructions', 'healthcare', file);
   const htmlFileName = `USER_INSTRUCTIONS_${file.replace(/\.xml$/i, '.html')}`;
-  const htmlFilePath = path.join(
-    process.cwd(),
-    'app',
-    'user_instructions',
-    'healthcare',
-    htmlFileName
-  );
+  const htmlFilePath = path.join(process.cwd(), 'user_instructions', 'healthcare', htmlFileName);
 
   try {
     // Read the main XML knowledge base file
-    const knowledgeBase = fs.readFileSync(xmlFilePath, 'utf8');
+    const knowledgeBase = await fs.promises.readFile(xmlFilePath, 'utf-8');
 
     // Try to read the corresponding user instructions HTML file
     let userInstructionsHtml: string | null = null;
 
     if (fs.existsSync(htmlFilePath)) {
       try {
-        userInstructionsHtml = fs.readFileSync(htmlFilePath, 'utf8');
+        userInstructionsHtml = await fs.promises.readFile(htmlFilePath, 'utf-8');
       } catch (htmlErr) {}
     }
 
