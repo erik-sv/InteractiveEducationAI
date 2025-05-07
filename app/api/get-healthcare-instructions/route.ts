@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import path from 'path';
 import fs from 'fs/promises';
 
@@ -14,30 +15,35 @@ const getText = (node: any): string => {
 };
 
 export async function GET() {
+  console.log('GET /api/get-healthcare-instructions called'); // Added for debugging
   // Determine base directory
   let baseDir = process.cwd();
-  const isDocker =
-    process.env.DOCKER === 'true' ||
-    fs
-      .access('/app')
-      .then(() => true)
-      .catch(() => false);
+  const dockerEnvSet = process.env.DOCKER === 'true';
+  const appDirExistsInRoot = await fs
+    .access('/app')
+    .then(() => true)
+    .catch(() => false);
+
+  const isDocker = dockerEnvSet || appDirExistsInRoot;
 
   // In Docker, the files are copied to /app directly, not in /app/app
-  if (isDocker || baseDir.endsWith('/app') || baseDir.endsWith('\\app')) {
+  if (isDocker) {
+    // Simplified Docker check
+    baseDir = '/app';
+  } else if (baseDir.endsWith('/app') || baseDir.endsWith('\\app')) {
+    // This case might be redundant if CWD in Railway is /app, but keep for local consistency if needed
     baseDir = '/app';
   } else {
-    // Check if we're in a subdirectory structure
-    try {
-      const appDirExists = await fs
-        .access(path.join(baseDir, 'app'))
-        .then(() => true)
-        .catch(() => false);
-
-      if (appDirExists) {
-      }
-    } catch (err) {}
+    // Local non-Docker CWD might be the project root. Check if 'app' subdir exists for Next.js structure.
+    // This part of the original logic might need further refinement if local paths are complex,
+    // but the primary concern is the Docker/Railway environment.
+    // For now, ensure 'baseDir' for Docker is correctly set to '/app'.
+    // The original logic for non-Docker local had:
+    // try { const appDirExists = await fs.access(path.join(baseDir, 'app')).then(()=>true).catch(()=>false); if (appDirExists) { /* no-op */ } } catch(err){}
+    // This didn't change baseDir, so we'll simplify by focusing on the Docker path first.
   }
+
+  console.log(`Determined baseDir: ${baseDir}`); // Added for debugging
 
   const instructionsDir = path.join(baseDir, 'ai_instructions', 'healthcare');
 
