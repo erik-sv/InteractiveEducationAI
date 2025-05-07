@@ -24,10 +24,63 @@ import FeedbackModal from '@/components/FeedbackModal';
 export default function NavBar() {
   const pathname = usePathname();
 
+  // Function to get the base domain for constructing absolute URLs
+  const getBaseDomain = () => {
+    // In browser environment
+    if (typeof window !== 'undefined') {
+      const host = window.location.host;
+      // Extract the base domain from the host
+      // e.g., from "healthcare.example.com" get "example.com"
+      const parts = host.split('.');
+
+      if (parts.length > 2) {
+        // Return the base domain (last two parts)
+        return parts.slice(-2).join('.');
+      }
+
+      return host; // Return as is if it's already a base domain
+    }
+
+    // Server-side or during build, use a default domain
+    return 'advantageintegrationai.com'; // Ensure this is your correct production base domain
+  };
+
+  // Function to get the full URL for a subdomain
+  const getSubdomainUrl = (subdomain: string, path: string = '/') => {
+    const baseDomain = getBaseDomain();
+    const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
+
+    // For localhost development - this might need adjustment based on local setup
+    if (baseDomain.includes('localhost') || baseDomain.includes('127.0.0.1')) {
+      // If testing subdomains locally (e.g. demos.localhost:3000), this needs to be smarter
+      // For simple localhost:3000, it would just be the path.
+      // However, if you ARE using subdomains locally (e.g. via /etc/hosts and Nginx)
+      // then you'd want behavior similar to production.
+      // Assuming for now that local dev will use relative paths or a single host for simplicity with NextLink.
+      // If you want absolute local subdomain URLs, this part needs to match your local Nginx setup.
+      // For now, let's make it behave like production for consistency, assuming local setup mirrors it.
+
+      if (subdomain === '' || subdomain === 'www') {
+        // Handle case for main domain without subdomain prefix
+        return `${protocol}//${baseDomain}${path}`;
+      }
+
+      return `${protocol}//${subdomain}.${baseDomain}${path}`;
+    }
+
+    // For production with subdomains
+    if (subdomain === '' || subdomain === 'www') {
+      // Handle case for main domain without subdomain prefix
+      return `${protocol}//${baseDomain}${path}`;
+    }
+
+    return `${protocol}//${subdomain}.${baseDomain}${path}`;
+  };
+
   return (
     <Navbar className="bg-gray-900/50 backdrop-blur-md border-b border-gray-800">
       <NavbarBrand>
-        <NextLink className="flex items-center gap-4" href="/">
+        <NextLink className="flex items-center gap-4" href={getSubdomainUrl('demos', '/')}>
           <Image
             priority
             alt="AI Education Platform"
