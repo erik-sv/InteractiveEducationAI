@@ -82,8 +82,8 @@ export default function HealthcarePage() {
       }
       const data = await response.json();
 
-      if (data.success) {
-        setKnowledgeBase(data.data.content?.memory_care_assistant || '');
+      if (data.success && data.data && typeof data.data.knowledgeBaseXml === 'string') {
+        setKnowledgeBase(data.data.knowledgeBaseXml);
 
         if (data.data.userInstructions) {
           const { title, sanitizedHtml } = extractTitleAndSanitizeHtml(data.data.userInstructions);
@@ -95,7 +95,10 @@ export default function HealthcarePage() {
           setUserInstructionsHtml(null);
         }
       } else {
-        throw new Error(data.error?.message || 'Failed to load knowledge base');
+        throw new Error(
+          data.error?.message ||
+            'Failed to load knowledge base or knowledgeBaseXml is missing/invalid'
+        );
       }
     } catch (err: any) {
       setError(err.message);

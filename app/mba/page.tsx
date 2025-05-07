@@ -60,25 +60,31 @@ export default function MBAPage() {
         const response = await fetch(`/api/get-mba-knowledge-base?fileName=${selectedInstruction}`);
         const data = await response.json();
 
-        if (data.success && data.data && data.data.content) {
+        if (data.success && data.data && data.data.knowledgeBaseXml && data.data.parsedContent) {
           // The API returns XML content in data.data.content
-          const xmlString = JSON.stringify(data.data.content);
+          const rawXmlForHeyGen = data.data.knowledgeBaseXml;
 
-          setKnowledgeBase(xmlString);
+          setKnowledgeBase(rawXmlForHeyGen);
 
           // Extract intro message from the content structure
           try {
-            const introMessage =
-              data.data.content.MBA?.intro_message ||
+            const introMsg =
+              data.data.parsedContent.MBA?.intro_message ||
               'Welcome to your MBA tutor! Please select a topic to begin.';
 
-            setIntroMessage(introMessage);
+            setIntroMessage(introMsg);
           } catch (error) {
-            setError('Error extracting intro message: ' + error);
+            setError(
+              'Error extracting intro message: ' +
+                (error instanceof Error ? error.message : String(error))
+            );
             setIntroMessage('Welcome to your MBA tutor! Please select a topic to begin.');
           }
         } else {
-          setError('Failed to load knowledge base: ' + data.error);
+          setError(
+            'Failed to load knowledge base: ' +
+              (data.error?.message || data.error || 'Unknown error')
+          );
         }
       } catch (error) {
         setError('Error loading MBA content. Please try again later.');

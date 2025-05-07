@@ -235,7 +235,8 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        content: jsonData,
+        parsedContent: jsonData,
+        knowledgeBaseXml: xmlContent,
         userInstructions: userInstructionsContent,
       },
     });
