@@ -14,6 +14,25 @@ const getText = (node: any): string => {
   return '';
 };
 
+// Helper to extract introduction from different XML schemas
+const extractIntroduction = (result: any): string => {
+  // Check for memory_care_assistant > intro_message (new schema)
+  if (result.memory_care_assistant && result.memory_care_assistant.intro_message) {
+    return getText(result.memory_care_assistant.intro_message);
+  }
+  
+  // Check for HEALTHCARE_INSTRUCTION_SET > OVERVIEW > INTRODUCTION (old schema)
+  if (
+    result.HEALTHCARE_INSTRUCTION_SET &&
+    result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW &&
+    result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW.INTRODUCTION
+  ) {
+    return getText(result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW.INTRODUCTION);
+  }
+  
+  return '';
+};
+
 export async function GET() {
   console.log('GET /api/get-healthcare-instructions called'); // Added for debugging
   // Determine base directory
@@ -124,16 +143,9 @@ async function processInstructionsDirectory(instructionsDir: string) {
 
           const result = parser.parse(content);
 
-          // Extract introduction from the XML
-          let intro = '';
-
-          if (
-            result.HEALTHCARE_INSTRUCTION_SET &&
-            result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW &&
-            result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW.INTRODUCTION
-          ) {
-            intro = getText(result.HEALTHCARE_INSTRUCTION_SET.OVERVIEW.INTRODUCTION);
-          }
+          // Extract introduction from the XML using our helper function
+          // that supports multiple schema formats
+          const intro = extractIntroduction(result);
 
           return {
             fileName: file,

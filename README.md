@@ -112,6 +112,12 @@ npm install
 npm run dev
 ```
 
+or
+
+```bash
+.\node_modules\.bin\next dev
+```
+
 ### Available Scripts
 
 ```json
